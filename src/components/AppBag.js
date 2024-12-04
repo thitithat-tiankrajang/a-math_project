@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./AppBag.css";
 
-function AppBag(props) {
+export default function AppBag(props) {
     const { onTileClick, tileDistribution, nullCount, setNullCount } = props;
     
     const createTileBag = () => {
@@ -153,5 +153,3 @@ function AppBag(props) {
         </div>
     );
 }
-
-export default AppBag;
