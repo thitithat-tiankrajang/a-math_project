@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import "./AppBag.css";
+import "./_css/AppBag.css";
 
 export default function AppBag(props) {
     const { onTileClick, tileDistribution, nullCount, setNullCount } = props;
-    
+
     const createTileBag = () => {
         const tiles = [];
 
@@ -66,17 +66,17 @@ export default function AppBag(props) {
             const [stackIndex, tileIndex] = key.split("-").map(Number);
             return tileBag[stackIndex][tileIndex];
         });
-    
+
         if (selectedTileValues.length > nullCount) {
-            selectedTileValues = selectedTileValues.slice(0, nullCount); 
+            selectedTileValues = selectedTileValues.slice(0, nullCount);
         }
 
         setNullCount(nullCount - selectedTileValues.length);
-    
+
         const keysToRemove = selectedTiles.slice(0, selectedTileValues.length);
-    
+
         onTileClick(selectedTileValues);
-    
+
         const newTileBag = tileBag.map((stack, stackIndex) => {
             if (stackIndex === selectedStack.stackIndex) {
                 return stack.filter((_, tileIndex) =>
@@ -85,9 +85,9 @@ export default function AppBag(props) {
             }
             return stack;
         });
-    
+
         setTileBag(newTileBag);
-    
+
         closePopupTiles();
     };
 
@@ -126,13 +126,12 @@ export default function AppBag(props) {
                             {selectedStack.tiles.map((tile, tileIndex) => (
                                 <div
                                     key={tileIndex}
-                                    className={`back-tile ${
-                                        selectedTiles.includes(
-                                            `${selectedStack.stackIndex}-${tileIndex}`
-                                        )
+                                    className={`back-tile ${selectedTiles.includes(
+                                        `${selectedStack.stackIndex}-${tileIndex}`
+                                    )
                                             ? "selected"
                                             : ""
-                                    }`}
+                                        }`}
                                     onClick={() =>
                                         toggleSelectedTile(
                                             selectedStack.stackIndex,

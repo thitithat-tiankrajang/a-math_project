@@ -1,13 +1,11 @@
-import './AppHeader.css';
+import './_css/AppHeader.css';
 
-function AppHeader() {
+export default function AppHeader() {
     return (
-        <div class="App-header">
+        <div className="App-header">
             <header>
                 A-MATH GAME
             </header>
         </div>
     );
-}  
-
-export default AppHeader;
+}

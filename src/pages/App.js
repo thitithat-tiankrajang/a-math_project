@@ -1,12 +1,12 @@
 import { useState } from "react";
 import './App.css';
-import AppHeader from './components/AppHeader';
-import AppBoard from './components/AppBoard';
-import AppRack from './components/AppRack';
-import AppBag from './components/AppBag';
-import AppScore from "./components/AppScore";
-import board from './data/board';
-import tileDistribution from './data/tileDistribution';
+import AppHeader from '../components/AppHeader';
+import AppBoard from '../components/AppBoard';
+import AppRack from '../components/AppRack';
+import AppBag from '../components/AppBag';
+import AppScore from "../components/AppScore";
+import board from '../data/board';
+import tileDistribution from '../data/tileDistribution';
 
 export default function App() {
   const [rack, setRack] = useState(Array(8).fill(null));

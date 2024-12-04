@@ -1,10 +1,10 @@
-import "./AppRack.css";
+import "./_css/AppRack.css";
 
-function AppRack({ rack }) {
+export default function AppRack({ rack }) {
     return (
         <div className="rack">
             {Array.from({ length: 8 }).map((_, index) => (
-                <div 
+                <div
                     className={`rack-cell rack-cell-${index} ${rack[index] ? "front-tile" : "empty-tile"}`}
                     key={index}
                 >
@@ -14,5 +14,3 @@ function AppRack({ rack }) {
         </div>
     );
 }
-
-export default AppRack;
