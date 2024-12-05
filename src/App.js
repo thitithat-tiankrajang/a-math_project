@@ -11,7 +11,9 @@ import tileDistribution from './data/tileDistribution.js';
 function App() {
   const [rack, setRack] = useState(Array(8).fill(null));
   const [nullCount, setNullCount] = useState(8);
-  const [boardState, setBoardState] = useState(board.map(row => [...row])); // Clone of initial board state
+  const [boardState, setBoardState] = useState(
+    Array.from({ length: 15 }, () => Array(15).fill(null))
+  );
   const [selectedTile, setSelectedTile] = useState(null); // Track selected tile
 
   // เลือก tile จาก rack
@@ -27,16 +29,16 @@ function App() {
     if (selectedTile) {
       setBoardState(prevBoard => {
         const newBoard = [...prevBoard];
-        let boolOfBoard = (newBoard[row][col] === 'Px1' || newBoard[row][col] === 'Px2' || newBoard[row][col] === 'Px3'
-          || newBoard[row][col] === 'Ex2' || newBoard[row][col] === 'Ex3'
-        );
-        if (boolOfBoard) { // วางได้เฉพาะช่องว่าง
-          newBoard[row][col] = selectedTile.tile;
+        if (newBoard[row][col] === null) { // วางได้เฉพาะช่องว่าง
 
+          newBoard[row][col] = selectedTile.tile;
           // ลบ tile จาก rack
-          const newRack = [...rack]; // ใช้ rack ปัจจุบัน (ไม่ใช้ prevRack)
-          newRack[selectedTile.index] = null;
-          setRack(newRack); // อัปเดต rack ทันที
+          setRack(prevRack => {
+            const newRack = [...prevRack];
+            newRack[selectedTile.index] = null;
+            return newRack;
+          });
+
           setSelectedTile(null); // ล้าง selected tile
         }
         return newBoard;
@@ -65,7 +67,8 @@ function App() {
         <div className="app-container">
           <section className="lefths">
             <AppBoard
-              board={boardState}
+              board={board}
+              boardState={boardState}
               onPlaceTile={placeTileOnBoard}
             />
           </section>

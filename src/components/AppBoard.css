@@ -29,29 +29,45 @@
     background-color: #ddd;
 }
 
+.tile {
+    width: 43px;
+    height: 43px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #444;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
 .str-image {
     height: 30px;
 }
 
-.gray-cell {
+.Px1 {
     background-color: #7c7c7c;
     /* #7c7c7c */
 }
 
-.orange-cell {
+.Px2 {
     background-color: #ffc251;
 }
 
-.blue-cell {
+.Px3 .str {
     background-color: #4dafff;
     color: white;
 }
 
-.yellow-cell {
+.Ex2 {
     background-color: #ffff77;
 }
 
-.red-cell {
+.Ex3 {
     background-color: #ff4949;
     color: white;
 }

@@ -1,40 +1,22 @@
 import React from "react";
 import "./AppBoard.css";
 
-const AppBoard = ({ board, onPlaceTile }) => {
-  const getClassForCell = (cell) => {
-    switch (cell) {
-      case "Px1":
-        return "gray-cell";
-      case "Px2":
-        return "orange-cell";
-      case "Px3":
-        return "blue-cell";
-      case "Ex2":
-        return "yellow-cell";
-      case "Ex3":
-        return "red-cell";
-      default:
-        return "";
-    }
-  };
+const AppBoard = ({ board, boardState, onPlaceTile }) => {
 
-  const getNameForCell = (name) => {
-    switch (name) {
-      case "Px1":
-        return "";
-      case "Px2":
-        return "2xP";
-      case "Px3":
-        return "3xP";
-      case "Ex2":
-        return "2xE";
-      case "Ex3":
-        return "3xE";
-      default:
-        return "";
+  const createElementInCell = (rowIndex, cellIndex) => {
+    if (boardState[rowIndex][cellIndex] === null) {
+      return (
+        board[rowIndex][cellIndex] === "str" ? ( <img src="./star-image.png" alt="Star" className="str-image" />) 
+          : board[rowIndex][cellIndex] === "Px1" ? "" : board[rowIndex][cellIndex]
+      );
+    } else {
+      return (
+        <div className="tile">
+          {boardState[rowIndex][cellIndex]}
+        </div>
+      );
     }
-  };
+  }
 
   return (
     <div className="board">
@@ -42,15 +24,10 @@ const AppBoard = ({ board, onPlaceTile }) => {
         <div className="row" key={rowIndex}>
           {row.map((cell, cellIndex) => (
             <div
-              key={`${rowIndex}-${cellIndex}`}
-              className={`cell ${getClassForCell(cell)}`}
-              onClick={() => onPlaceTile(rowIndex, cellIndex)} // คลิกเพื่อวาง tile
+              className={`cell ${cell}`}
+              onClick={() => onPlaceTile(rowIndex, cellIndex)}
             >
-              {cell === "str" ? (
-                  <img src="./star-image.png" alt="Star" className="str-image" />
-              ) : (
-                  getNameForCell(cell)
-              )}
+              {createElementInCell(rowIndex, cellIndex)}
             </div>
           ))}
         </div>
