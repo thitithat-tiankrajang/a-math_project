@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./_css/AppBag.css";
+import "./AppBag.css";
 
 export default function AppBag(props) {
     const { onTileClick, tileDistribution, nullCount, setNullCount } = props;

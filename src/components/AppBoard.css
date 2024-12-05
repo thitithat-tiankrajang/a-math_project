@@ -22,7 +22,11 @@
     /* font-weight: bold; */
     border: 1px solid #000000;
     background-color: #60b7ff;
-    
+    cursor: pointer;
+}
+  
+.cell:hover {
+    background-color: #ddd;
 }
 
 .str-image {

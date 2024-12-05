@@ -1,6 +1,6 @@
-import './_css/AppScore.css';
+import './AppScore.css';
 
-export default function AppScore() {
+function AppScore() {
 
     return (
         <section className='score-section'>
@@ -15,3 +15,5 @@ export default function AppScore() {
         </section>
     );
 }
+
+export default AppScore;
