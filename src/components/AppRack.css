@@ -5,17 +5,18 @@
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
 .rack-cell.selected {
-    border-color: #0ef; /* Highlight border */
-    background-color: #e2fdff; /* Highlight background */
-    box-shadow: 0 0 10px rgb(0, 200, 255);
+    border-color: rgb(255, 255, 255); /* Highlight border */
+    background-color: #ffffff; /* Highlight background */
+    box-shadow: 0 0 12px rgb(255, 255, 255);
     transform: scale(1.1); /* Slight enlargement */
-  }
+}
   
   /* Add hover effect for rack cells */
 .rack-cell:hover {
-transform: scale(1.15);
-box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    transform: scale(1.15);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 }
 
 .front-tile {

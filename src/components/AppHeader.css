@@ -3,7 +3,7 @@
     font-size: 1em;
     border-bottom: 1px solid gray;
     height: 50px; 
-    width: 100vw;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;

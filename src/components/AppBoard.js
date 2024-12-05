@@ -1,17 +1,21 @@
 import React from "react";
 import "./AppBoard.css";
 
-const AppBoard = ({ board, boardState, onPlaceTile }) => {
+const AppBoard = ({ board, boardState, onCellClick, selectedTileInBoard}) => {
 
   const createElementInCell = (rowIndex, cellIndex) => {
-    if (boardState[rowIndex][cellIndex] === null) {
+    if (boardState[rowIndex][cellIndex] === '21') {
       return (
         board[rowIndex][cellIndex] === "str" ? ( <img src="./star-image.png" alt="Star" className="str-image" />) 
           : board[rowIndex][cellIndex] === "Px1" ? "" : board[rowIndex][cellIndex]
       );
     } else {
       return (
-        <div className="tile">
+        <div 
+          className={`tile
+            ${(selectedTileInBoard?.rowIndex === rowIndex && selectedTileInBoard?.colIndex === cellIndex) ? 
+              "selected" : ""}`}
+        >
           {boardState[rowIndex][cellIndex]}
         </div>
       );
@@ -25,7 +29,7 @@ const AppBoard = ({ board, boardState, onPlaceTile }) => {
           {row.map((cell, cellIndex) => (
             <div
               className={`cell ${cell}`}
-              onClick={() => onPlaceTile(rowIndex, cellIndex)}
+              onClick={() => onCellClick(rowIndex, cellIndex)}
             >
               {createElementInCell(rowIndex, cellIndex)}
             </div>

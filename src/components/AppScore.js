@@ -6,12 +6,12 @@ function AppScore() {
         <section className='score-section'>
             <div className='scorebox'>
                 <div className='name'> BEST </div>
-                <div className='score'> 100 </div>
+                <div className='score'> 000 </div>
             </div>
-            <div className='scorebox'>
+            {/* <div className='scorebox'>
                 <div className='name'> NEON </div>
                 <div className='score'> 200 </div>
-            </div>
+            </div> */}
         </section>
     );
 }

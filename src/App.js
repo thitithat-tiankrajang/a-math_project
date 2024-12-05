@@ -9,47 +9,105 @@ import board from './data/board.js';
 import tileDistribution from './data/tileDistribution.js';
 
 function App() {
-  const [rack, setRack] = useState(Array(8).fill(null));
+  const [rack, setRack] = useState(Array(8).fill('21'));
   const [nullCount, setNullCount] = useState(8);
   const [boardState, setBoardState] = useState(
-    Array.from({ length: 15 }, () => Array(15).fill(null))
+    Array.from({ length: 15 }, () => Array(15).fill('21'))
   );
-  const [selectedTile, setSelectedTile] = useState(null); // Track selected tile
+  const [selectedTileInRack, setSelectedTileInRack] = useState(null);
+  const [selectedTileInBoard, setSelectedTileInBoard] = useState(null);
+
+  function selectTileFromBoard(rowIndex, colIndex) {
+    if (boardState[rowIndex][colIndex] !== '21') {
+      setSelectedTileInBoard({ tile: boardState[rowIndex][colIndex], rowIndex, colIndex }); // เก็บข้อมูล tile
+      setSelectedTileInRack(null);
+    }
+  }
 
   // เลือก tile จาก rack
-  function selectTileFromRack(index) {
-  if (rack[index] !== null) {
-    console.log("Selected tile:", rack[index], "at index", index);
-    setSelectedTile({ tile: rack[index], index }); // เก็บข้อมูล tile
-  }
-}
-
-
-  function placeTileOnBoard(row, col) {
-    if (selectedTile) {
+  function onRackClick(index) {
+    if (selectedTileInRack) {
+      setRack(prevRack => {
+        const newRack = [...prevRack];
+        [newRack[selectedTileInRack.index], newRack[index]] = [newRack[index], newRack[selectedTileInRack.index]];
+        setSelectedTileInRack(null);
+        return newRack;
+      });
+    }
+    else if (selectedTileInBoard) {
       setBoardState(prevBoard => {
         const newBoard = [...prevBoard];
-        if (newBoard[row][col] === null) { // วางได้เฉพาะช่องว่าง
+        newBoard[selectedTileInBoard.rowIndex][selectedTileInBoard.colIndex] = rack[index];
+        return newBoard;
+      });
+      setRack(prevRack => {
+        const newRack = [...prevRack];
+        newRack[index] = selectedTileInBoard.tile;
+        setSelectedTileInBoard(null);
+        return newRack;
+      });
+    }
+    else {
+      if (rack[index] !== '21') {
+        setSelectedTileInRack({ tile: rack[index], index }); // เก็บข้อมูล tile
+        setSelectedTileInBoard(null);
+      }
+    }
+  }
 
-          newBoard[row][col] = selectedTile.tile;
+  function onBoardClick(row, col) {
+    if (selectedTileInRack) {
+      setBoardState(prevBoard => {
+        const newBoard = [...prevBoard];
+        if (newBoard[row][col] === '21') { // วางได้เฉพาะช่องว่าง
+
+          newBoard[row][col] = selectedTileInRack.tile;
           // ลบ tile จาก rack
           setRack(prevRack => {
             const newRack = [...prevRack];
-            newRack[selectedTile.index] = null;
+            newRack[selectedTileInRack.index] = '21';
             return newRack;
           });
 
-          setSelectedTile(null); // ล้าง selected tile
+          setSelectedTileInRack(null); // ล้าง selected tile
+        } else {
+          setRack(prevRack => {
+            const newRack = [...prevRack];
+            newRack[selectedTileInRack.index] = boardState[row][col];
+            return newRack;
+          });
+
+          setBoardState(prevBoard => {
+            const newBoard = [...prevBoard];
+            newBoard[row][col] = selectedTileInRack.tile;
+            return newBoard;
+          });
+
+          setSelectedTileInRack(null);
         }
         return newBoard;
       });
+    }  
+    else {
+        if (selectedTileInBoard) {
+          setBoardState(prevBoard => {
+            const newBoard = [...prevBoard];
+            [newBoard[row][col], newBoard[selectedTileInBoard.rowIndex][selectedTileInBoard.colIndex]] 
+            = [newBoard[selectedTileInBoard.rowIndex][selectedTileInBoard.colIndex], newBoard[row][col]];
+            setSelectedTileInBoard(null); // ล้าง selected tile
+
+            return newBoard;
+          });
+        } else {
+          selectTileFromBoard(row, col);
+        }
     }
   }
 
   function addToRack(tiles) {
     tiles.forEach(tile => {
       setRack(prevRack => {
-        const emptyIndex = prevRack.findIndex(cell => cell === null);
+        const emptyIndex = prevRack.findIndex(cell => cell === '21');
         if (emptyIndex !== -1) {
           const newRack = [...prevRack];
           newRack[emptyIndex] = tile;
@@ -62,14 +120,15 @@ function App() {
 
   return (
     <div className="App">
-      <AppHeader />
       <section className='app-section'>
+        <AppHeader />
         <div className="app-container">
           <section className="lefths">
             <AppBoard
               board={board}
               boardState={boardState}
-              onPlaceTile={placeTileOnBoard}
+              onCellClick={onBoardClick}
+              selectedTileInBoard={selectedTileInBoard}
             />
           </section>
           <section className="righths">
@@ -87,8 +146,8 @@ function App() {
             <section className="bottom-section">
               <AppRack
                 rack={rack}
-                onTileClick={selectTileFromRack} // ส่งฟังก์ชันเลือก tile
-                selectedTile={selectedTile} // ส่ง selectedTile เพื่อใช้ใน CSS
+                onTileClick={onRackClick} // ส่งฟังก์ชันเลือก tile
+                selectedTileInRack={selectedTileInRack} // ส่ง selectedTileInRack เพื่อใช้ใน CSS
               />
               <div className="action">
                 <button className="submit-button"> SUBMIT </button>
