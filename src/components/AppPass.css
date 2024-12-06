@@ -1,0 +1,26 @@
+.app-pass {
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+    background-color: rgb(240, 240, 240);
+    border-radius: 5px;
+    border: 1px solid gray;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.app-pass:active {
+    background-color: white;
+}
+
+.app-pass:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.pass-text {
+    width: 100%;
+    text-align: center;
+    user-select: none;
+}

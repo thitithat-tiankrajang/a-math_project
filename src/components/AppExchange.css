@@ -1,0 +1,26 @@
+.app-exchange {
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    width: 25%;
+    background-color: rgb(240, 240, 240);
+    border-radius: 5px;
+    border: 1px solid gray;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.app-exchange:active {
+    background-color: white;
+}
+
+.app-exchange:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.exchange-text {
+    width: 100%;
+    text-align: center;
+    user-select: none;
+}

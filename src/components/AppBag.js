@@ -6,32 +6,36 @@ export default function AppBag(props) {
 
     const createTileBag = () => {
         const tiles = [];
-
-        for (const [tile, count] of Object.entries(tileDistribution)) {
-            for (let i = 0; i < count; i++) {
-                tiles.push(tile);
+    
+        // สร้างรายการ tiles จาก tileDistribution
+        for (const [tile, data] of Object.entries(tileDistribution)) {
+            for (let i = 0; i < data.count; i++) { 
+                tiles.push({ name: tile, point: data.point }); // เก็บเป็นวัตถุ
             }
         }
-
+    
+        // สุ่มลำดับของ tiles ด้วย Fisher-Yates Shuffle
         for (let i = tiles.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
         }
-
+    
+        // แบ่ง tiles เป็นกลุ่ม ๆ (เช่น 10 ชุด ๆ ละ 10 ตัว)
         const tileBag = [];
         for (let i = 0; i < 10; i++) {
             tileBag.push(tiles.slice(i * 10, (i + 1) * 10));
         }
+    
         return tileBag;
     };
 
     const [tileBag, setTileBag] = useState(createTileBag());
-    const [selectedBag, setSelectedBag] = useState(false); // Set to true when opening the bag popup
+    const [selectedBag, setSelectedBag] = useState(false);
     const [selectedStack, setSelectedStack] = useState(null);
     const [selectedTiles, setSelectedTiles] = useState([]);
 
     function openStackPopup() {
-        setSelectedBag(true); // เปิด popup สำหรับ stack ทั้งหมดใน tileBag
+        setSelectedBag(true);
     }
 
     function openTilePopup(index) {
@@ -40,18 +44,17 @@ export default function AppBag(props) {
     }
 
     function closePopupStack() {
-        setSelectedBag(false); // ปิด popup ของ stack ทั้งหมด
+        setSelectedBag(false);
     }
 
     function closePopupTiles() {
         setSelectedStack(null);
-        setSelectedTiles([]); // ล้างสถานะเมื่อปิด popup
+        setSelectedTiles([]);
         openStackPopup();
     }
 
     function toggleSelectedTile(stackIndex, tileIndex) {
-        const tileKey = `${stackIndex}-${tileIndex}`; // ใช้ตำแหน่งที่ไม่ซ้ำเป็นตัวบ่งชี้
-
+        const tileKey = `${stackIndex}-${tileIndex}`;
         setSelectedTiles((prevTiles) => {
             if (prevTiles.includes(tileKey)) {
                 return prevTiles.filter((tile) => tile !== tileKey);
@@ -62,20 +65,20 @@ export default function AppBag(props) {
     }
 
     const addTilesToRack = () => {
-        let selectedTileValues = selectedTiles.map((key) => {
+        let selectedTileObjects = selectedTiles.map((key) => {
             const [stackIndex, tileIndex] = key.split("-").map(Number);
-            return tileBag[stackIndex][tileIndex];
+            return tileBag[stackIndex][tileIndex]; // เก็บทั้ง `name` และ `point`
         });
 
-        if (selectedTileValues.length > nullCount) {
-            selectedTileValues = selectedTileValues.slice(0, nullCount);
+        if (selectedTileObjects.length > nullCount) {
+            selectedTileObjects = selectedTileObjects.slice(0, nullCount);
         }
 
-        setNullCount(nullCount - selectedTileValues.length);
+        setNullCount(nullCount - selectedTileObjects.length);
 
-        const keysToRemove = selectedTiles.slice(0, selectedTileValues.length);
+        const keysToRemove = selectedTiles.slice(0, selectedTileObjects.length);
 
-        onTileClick(selectedTileValues);
+        onTileClick(selectedTileObjects);
 
         const newTileBag = tileBag.map((stack, stackIndex) => {
             if (stackIndex === selectedStack.stackIndex) {
@@ -100,7 +103,7 @@ export default function AppBag(props) {
             {selectedBag && !selectedStack && (
                 <div className="popup-stack">
                     <button className="close-popup-stack-button" onClick={closePopupStack}>
-                        Close
+                        CLOSE
                     </button>
                     <div className="popup-stack-content">
                         {tileBag.map((stack, index) => (
@@ -109,7 +112,7 @@ export default function AppBag(props) {
                                 className="stack"
                                 onClick={() => openTilePopup(index)}
                             >
-                                Stack {index}
+                                STACK {index}
                             </div>
                         ))}
                     </div>
@@ -120,7 +123,7 @@ export default function AppBag(props) {
                 <div className="popup-tiles">
                     <div className="popup-tiles-content">
                         <button className="close-popup-tiles-button" onClick={closePopupTiles}>
-                            Close
+                            CLOSE
                         </button>
                         <div className="tiles">
                             {selectedStack.tiles.map((tile, tileIndex) => (
@@ -139,12 +142,13 @@ export default function AppBag(props) {
                                         )
                                     }
                                 >
-                                    {/* {tile} */}
+                                    {tile.name}
+                                    <div className="tile-point">{tile.point}</div>
                                 </div>
                             ))}
                         </div>
                         <button className="pick-popup-tiles-button" onClick={addTilesToRack}>
-                            Pick
+                            PICK
                         </button>
                     </div>
                 </div>
