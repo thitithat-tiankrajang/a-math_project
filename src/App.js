@@ -12,15 +12,10 @@ import AppSubmit from "./components/AppSubmit.js";
 import AppPass from "./components/AppPass.js";
 
 function App() {
-  const [rack, setRack] = useState(
-    Array(8).fill({ name: "empty-cell", point: null })
-  );
+  const [firstTern, setFirstTern] = useState(true);
+  const [rack, setRack] = useState(Array(8).fill({ name: "empty-cell", point: null }));
   const [nullCount, setNullCount] = useState(8);
-  const [boardState, setBoardState] = useState(
-    Array.from({ length: 15 }, () =>
-      Array(15).fill({ data: { name: "empty-cell", point: null }, lock: false })
-    )
-  );
+  const [boardState, setBoardState] = useState(Array.from({ length: 15 }, () => Array(15).fill({ data: { name: "empty-cell", point: null }, lock: false })));
   const [selectedTileInRack, setSelectedTileInRack] = useState({
     name: "empty-cell",
     point: null,
@@ -283,9 +278,14 @@ function App() {
   }
 
   function onSubmitClick() {
+    if (firstTern && boardState[7][7].data.name === 'empty-cell') {
+      alert("wrong");
+      return;
+    }
     if (nullCount !== 0) {
       return;
     }
+    
     console.log(tileInBoardByTern);
     let checkRow = true,
       checkCol = true,
@@ -315,11 +315,7 @@ function App() {
       let inline = true;
       if (checkRow) {
         sortedArr = [...tileInBoardByTern].sort((a, b) => a.colIdx - b.colIdx);
-        for (
-          let i = sortedArr[0].colIdx;
-          i <= sortedArr[sortedArr.length - 1].colIdx;
-          i++
-        ) {
+        for ( let i = sortedArr[0].colIdx; i <= sortedArr[sortedArr.length - 1].colIdx; i++) {
           if (boardState[firstRow][i].data.name === "empty-cell") {
             inline = false;
           }
@@ -340,11 +336,7 @@ function App() {
         }
       } else {
         sortedArr = [...tileInBoardByTern].sort((a, b) => a.rowIdx - b.rowIdx);
-        for (
-          let i = sortedArr[0].rowIdx;
-          i <= sortedArr[sortedArr.length - 1].rowIdx;
-          i++
-        ) {
+        for ( let i = sortedArr[0].rowIdx; i <= sortedArr[sortedArr.length - 1].rowIdx; i++) {
           if (boardState[i][firstCol].data.name === "empty-cell") {
             inline = false;
           }
@@ -365,6 +357,9 @@ function App() {
         }
       }
       console.log(sortedArr);
+    }
+    if (firstTern) {
+      setFirstTern(false);
     }
     setNullCount(tileInBoardByTern.length);
     setTileInBoardByTern([]);

@@ -10,6 +10,7 @@ function AppExchange(props) {
 
     const confirmExchange = () => {
         setSelectedBag(true);
+        setNullCount(exchangeTiles.length);
     }
 
     const toggleRackTileSelection = (index) => {
@@ -19,6 +20,9 @@ function AppExchange(props) {
     };
 
     const startExchange = () => {
+        if (nullCount !== 0) {
+            return;
+        }
         setExchangeMode(true);
         setExchangeTiles([]);
     };
