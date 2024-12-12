@@ -1,5 +1,4 @@
-//hello
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import './App.css';
 import AppHeader from './components/AppHeader.js';
 import AppBoard from './components/AppBoard.js';
@@ -152,6 +151,32 @@ function App() {
         return prevRack;
       });
     });
+  }
+
+  function isEquationValid(arr) {
+    let equation = arr.map(item => boardState[item.rowIdx][item.colIdx].name).join('');  // รวม array เป็น string เดียว
+    // console.log(equation);
+    // let parts = equation.split('=');  // แยก string ตามเครื่องหมาย "="
+
+    // if (parts.length < 2) return false;  // ต้องมีเครื่องหมาย "=" อย่างน้อยหนึ่งตัว
+
+    // for (let i = 0; i < parts.length - 1; i++) {
+    //     let leftSide = parts[i].trim();
+    //     let rightSide = parts[i + 1].trim();
+
+    //     try {
+    //         // คำนวณค่าทั้งสองฝั่งของ "="
+    //         let leftValue = new Function('return ' + leftSide)();   
+    //         let rightValue = new Function('return ' + rightSide)(); 
+
+    //         if (leftValue !== rightValue) {
+    //             return false;  // หากค่าทั้งสองฝั่งไม่เท่ากัน ให้คืนค่า false
+    //         }
+    //     } catch (error) {
+    //         return false;  // หากเกิดข้อผิดพลาดในขณะคำนวณ ให้คืนค่า false
+    //     }
+    // }
+    return true;  // หากทุกอย่างถูกต้อง
   }
 
   function infixToPostfix() {
