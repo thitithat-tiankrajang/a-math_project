@@ -2,41 +2,44 @@ import React, { useState } from "react";
 import "./style/AppExchange.css";
 
 function AppExchange(props) {
-    const { onTileClick, tileBag = [], setTileBag, rack = [], setRack, selectedBag, setSelectedBag, nullCount, setNullCount } = props;
+    const { onTileClick, tileBag , setTileBag, rack , setRack, selectedBag, setSelectedBag, nullCount, setNullCount } = props;
 
     const [exchangeMode, setExchangeMode] = useState(false);
     const [exchangeTiles, setExchangeTiles] = useState([]);
 
     // Function to confirm exchange
     const confirmExchange = () => {
-        setNullCount(exchangeTiles.length);
-
-        // Create copies of the rack and tileBag
+        // Create copies of the rack
         let updatedRack = [...rack];
-        let updatedTileBag = [...tileBag];
 
-        // Loop through the selected tiles and make them empty in the rack
-        exchangeTiles.forEach(index => {
-            // Get the selected tile from the rack
+        // Collect tiles to be exchanged
+        const exchangedTiles = exchangeTiles.map(index => {
             const tile = updatedRack[index];
-
+            
             // Set the tile in the rack to "empty-cell"
             updatedRack[index] = { name: "empty-cell", point: 0 };
-
-            // Add the tile to the tileBag (to be swapped with new tiles)
-            updatedTileBag.push(tile);
+            
+            return tile;
         });
 
-        // Update the rack and tileBag states
+        // Set the number of null cells to exchange
+        setNullCount(exchangeTiles.length);
+
+        // Update the rack 
         setRack(updatedRack);
-        setTileBag(updatedTileBag);
 
         // Mark the exchange as confirmed
         setSelectedBag(true);
+
+        // Return exchangedTiles for parent component to handle
+        return exchangedTiles;
     };
 
     // Toggle tile selection in the rack
     const toggleRackTileSelection = (index) => {
+        // Only allow selection of non-empty tiles
+        if (rack[index].name === 'empty-cell') return;
+
         setExchangeTiles((prev) => {
             if (prev.includes(index)) {
                 return prev.filter((i) => i !== index);
@@ -48,8 +51,11 @@ function AppExchange(props) {
 
     // Start the exchange process
     const startExchange = () => {
-        setExchangeMode(true);
-        setExchangeTiles([]);
+        // Only start exchange if there are no null cells and not already in exchange mode
+        if (nullCount === 0 && !exchangeMode) {
+            setExchangeMode(true);
+            setExchangeTiles([]);
+        }
     };
 
     // Cancel the exchange process
@@ -72,7 +78,9 @@ function AppExchange(props) {
                         {rack && rack.length > 0 && rack.map((tile, index) => (
                             <div
                                 key={index}
-                                className={`rack-tile ${exchangeTiles.includes(index) ? "selected" : ""}`}
+                                className={`rack-tile 
+                                    ${tile.name === 'empty-cell' ? 'empty' : ''} 
+                                    ${exchangeTiles.includes(index) ? "selected" : ""}`}
                                 onClick={() => toggleRackTileSelection(index)}
                             >
                                 {tile.name !== 'empty-cell' ? (
@@ -88,7 +96,12 @@ function AppExchange(props) {
                     </div>
 
                     <div className="exchange-buttons">
-                        <button onClick={confirmExchange}>Confirm</button>
+                        <button 
+                            onClick={confirmExchange}
+                            disabled={exchangeTiles.length === 0}
+                        >
+                            Confirm
+                        </button>
                         <button onClick={cancelExchange}>Cancel</button>
                     </div>
                 </div>
