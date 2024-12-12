@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import './App.css';
 import AppHeader from './components/AppHeader.js';
 import AppBoard from './components/AppBoard.js';
@@ -12,32 +12,32 @@ import AppSubmit from "./components/AppSubmit.js";
 import AppPass from "./components/AppPass.js";
 
 function App() {
-  const [rack, setRack] = useState(Array(8).fill({name: '21', point: null}));
+  const [rack, setRack] = useState(Array(8).fill({name: 'empty-cell', point: null}));
   const [nullCount, setNullCount] = useState(8);
   const [boardState, setBoardState] = useState(
-    Array.from({ length: 15 }, () => Array(15).fill({data: {name: '21', point: null}, lock: false}))
+    Array.from({ length: 15 }, () => Array(15).fill({data: {name: 'empty-cell', point: null}, lock: false}))
   );
-  const [selectedTileInRack, setSelectedTileInRack] = useState({name: '21', point: null, idx: null});
-  const [selectedTileInBoard, setSelectedTileInBoard] = useState({name: '21', point: null, rowIdx: null, colIdx: null});
+  const [selectedTileInRack, setSelectedTileInRack] = useState({name: 'empty-cell', point: null, idx: null});
+  const [selectedTileInBoard, setSelectedTileInBoard] = useState({name: 'empty-cell', point: null, rowIdx: null, colIdx: null});
   const [tileInBoardByTern, setTileInBoardByTern] = useState([]);
 
   function selectTileFromBoard(row, col) {
-    if (boardState[row][col].data.name !== '21') {
+    if (boardState[row][col].data.name !== 'empty-cell') {
       setSelectedTileInBoard({ name: boardState[row][col].data.name, point: boardState[row][col].data.point, rowIdx: row, colIdx: col }); // เก็บข้อมูล tile
-      setSelectedTileInRack({name: '21', point: null, idx: null});
+      setSelectedTileInRack({name: 'empty-cell', point: null, idx: null});
     }
   }
 
   // เลือก tile จาก rack
   function onRackClick(index) {
-    if (selectedTileInRack.name !== '21') {
+    if (selectedTileInRack.name !== 'empty-cell') {
       setRack(prevRack => {
         const newRack = [...prevRack];
         [newRack[selectedTileInRack.idx], newRack[index]] = [newRack[index], newRack[selectedTileInRack.idx]];
-        setSelectedTileInRack({ name: '21', point: null, idx: null });
+        setSelectedTileInRack({ name: 'empty-cell', point: null, idx: null });
         return newRack;
       });
-    } else if (selectedTileInBoard.name !== '21') {
+    } else if (selectedTileInBoard.name !== 'empty-cell') {
 
       setBoardState(prevBoard => {
         const newBoard = [...prevBoard];
@@ -58,22 +58,22 @@ function App() {
           )
         );
   
-        setSelectedTileInBoard({ name: '21', point: null, rowIdx: null, colIdx: null });
+        setSelectedTileInBoard({ name: 'empty-cell', point: null, rowIdx: null, colIdx: null });
         return newRack;
       });
     } else {
-      if (rack[index].name !== '21') {
+      if (rack[index].name !== 'empty-cell') {
         setSelectedTileInRack({ name: rack[index].name, point: rack[index].point, idx: index }); // เก็บข้อมูล tile
-        setSelectedTileInBoard({ name: '21', point: null, rowIdx: null, colIdx: null });
+        setSelectedTileInBoard({ name: 'empty-cell', point: null, rowIdx: null, colIdx: null });
       }
     }
   }
 
   function onBoardClick(row, col) {
-    if (selectedTileInRack.name !== '21') {
+    if (selectedTileInRack.name !== 'empty-cell') {
       setBoardState(prevBoard => {
         const newBoard = [...prevBoard];
-        if (newBoard[row][col].data.name === '21') { // วางได้เฉพาะช่องว่าง
+        if (newBoard[row][col].data.name === 'empty-cell') { // วางได้เฉพาะช่องว่าง
           newBoard[row][col] = {data: { name: selectedTileInRack.name, point: selectedTileInRack.point }, lock: false};
   
           // เพิ่มข้อมูลลงใน tileInBoardByTern
@@ -82,11 +82,11 @@ function App() {
           // ลบ tile จาก rack
           setRack(prevRack => {
             const newRack = [...prevRack];
-            newRack[selectedTileInRack.idx] = { name: '21', point: null };
+            newRack[selectedTileInRack.idx] = { name: 'empty-cell', point: null };
             return newRack;
           });
   
-          setSelectedTileInRack({ name: '21', point: null, idx: null }); // ล้าง selected tile
+          setSelectedTileInRack({ name: 'empty-cell', point: null, idx: null }); // ล้าง selected tile
         } else {
           // ย้ายเบี้ยจาก rack ไปแทนที่เบี้ยในกระดาน
           setRack(prevRack => {
@@ -111,11 +111,11 @@ function App() {
             return newBoard;
           });
   
-          setSelectedTileInRack({ name: '21', point: null, idx: null });
+          setSelectedTileInRack({ name: 'empty-cell', point: null, idx: null });
         }
         return newBoard;
       });
-    } else if (selectedTileInBoard.name !== '21') {
+    } else if (selectedTileInBoard.name !== 'empty-cell') {
       setBoardState(prevBoard => {
         const newBoard = [...prevBoard];
         [newBoard[row][col], newBoard[selectedTileInBoard.rowIdx][selectedTileInBoard.colIdx]] =
@@ -130,7 +130,7 @@ function App() {
           );
         });
   
-        setSelectedTileInBoard({ name: '21', point: null, rowIdx: null, colIdx: null }); // ล้าง selected tile
+        setSelectedTileInBoard({ name: 'empty-cell', point: null, rowIdx: null, colIdx: null }); // ล้าง selected tile
         return newBoard;
       });
     } else {
@@ -142,7 +142,7 @@ function App() {
   function addToRack(tiles) {
     tiles.forEach(tile => {
       setRack(prevRack => {
-        const emptyIndex = prevRack.findIndex(cell => cell.name === '21');
+        const emptyIndex = prevRack.findIndex(cell => cell.name === 'empty-cell');
         if (emptyIndex !== -1) {
           const newRack = [...prevRack];
           newRack[emptyIndex] = tile;
@@ -151,6 +151,32 @@ function App() {
         return prevRack;
       });
     });
+  }
+
+  function isEquationValid(arr) {
+    let equation = arr.map(item => boardState[item.rowIdx][item.colIdx].name).join('');  // รวม array เป็น string เดียว
+    // console.log(equation);
+    // let parts = equation.split('=');  // แยก string ตามเครื่องหมาย "="
+
+    // if (parts.length < 2) return false;  // ต้องมีเครื่องหมาย "=" อย่างน้อยหนึ่งตัว
+
+    // for (let i = 0; i < parts.length - 1; i++) {
+    //     let leftSide = parts[i].trim();
+    //     let rightSide = parts[i + 1].trim();
+
+    //     try {
+    //         // คำนวณค่าทั้งสองฝั่งของ "="
+    //         let leftValue = new Function('return ' + leftSide)();   
+    //         let rightValue = new Function('return ' + rightSide)(); 
+
+    //         if (leftValue !== rightValue) {
+    //             return false;  // หากค่าทั้งสองฝั่งไม่เท่ากัน ให้คืนค่า false
+    //         }
+    //     } catch (error) {
+    //         return false;  // หากเกิดข้อผิดพลาดในขณะคำนวณ ให้คืนค่า false
+    //     }
+    // }
+    return true;  // หากทุกอย่างถูกต้อง
   }
 
   function infixToPostfix() {
@@ -179,12 +205,11 @@ function App() {
       if (checkRow) {
         sortedArr = [...tileInBoardByTern].sort((a, b) => a.colIdx - b.colIdx);
         for (let i = sortedArr[0].colIdx; i <= sortedArr[sortedArr.length - 1].colIdx; i++) {
-          if (boardState[firstRow][i].data.name === '21') {
+          if (boardState[firstRow][i].data.name === 'empty-cell') {
             inline = false;
           }
         }
-        if (inline) {
-          console.log("correct");
+        if (inline && isEquationValid(tileInBoardByTern)) {
           setBoardState(prevBoard => {
             const newBoard = [...prevBoard];
             for (let i = 0; i < tileInBoardByTern.length; i++) {
@@ -192,14 +217,14 @@ function App() {
             }
             return newBoard;
           })
-
         } else {
-          alert("wrong");
+          console.log("wrong");
+
         }
       } else {
         sortedArr = [...tileInBoardByTern].sort((a, b) => a.rowIdx - b.rowIdx);
         for (let i = sortedArr[0].rowIdx; i <= sortedArr[sortedArr.length - 1].rowIdx; i++) {
-          if (boardState[i][firstCol].data.name === '21') {
+          if (boardState[i][firstCol].data.name === 'empty-cell') {
             inline = false;
           }
         }
