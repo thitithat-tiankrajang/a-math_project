@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./style/AppExchange.css";
 
 function AppExchange(props) {
-    const { onTileClick, tileBag , setTileBag, rack , setRack, selectedBag, setSelectedBag, nullCount, setNullCount } = props;
+    const { onTileClick, tileBag, setTileBag, rack, setRack, selectedBag, setSelectedBag, nullCount, setNullCount } = props;
 
     const [exchangeMode, setExchangeMode] = useState(false);
     const [exchangeTiles, setExchangeTiles] = useState([]);
@@ -58,8 +58,21 @@ function AppExchange(props) {
         }
     };
 
-    // Cancel the exchange process
+    // Cancel the exchange process and update the bag
     const cancelExchange = () => {
+        // Create a new array to hold the updated selectedBag
+        let updatedBag = [...selectedBag];
+
+        // Loop through the tileBag and add exchanged tiles back to the bag
+        exchangeTiles.forEach(tileIndex => {
+            const exchangedTile = rack[tileIndex];
+            updatedBag.push(exchangedTile);
+        });
+
+        // Update the selectedBag with the new array
+        setSelectedBag(updatedBag);
+
+        // Reset the state
         setExchangeMode(false);
         setExchangeTiles([]);
     };
