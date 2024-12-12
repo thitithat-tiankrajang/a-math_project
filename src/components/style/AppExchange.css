@@ -1,8 +1,13 @@
+.exchange-instructions {
+    width: 25%;
+}
+
 .app-exchange {
     display: flex; 
     justify-content: center;
     align-items: center;
-    width: 25%;
+    width: 100%;
+    height: 100%;
     background-color: rgb(240, 240, 240);
     border-radius: 5px;
     border: 1px solid gray;
@@ -17,6 +22,49 @@
 .app-exchange:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.exchange-ui {
+    position: fixed;
+    top: 75%;
+    left: 75%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 2px solid #444;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+}
+
+.rack {
+    display: flex;
+    justify-content: center;
+    gap: 13px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.rack-tile.selected {
+    background-color: red;
+}
+
+.rack-tile {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #444;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    user-select: none;
 }
 
 .exchange-text {

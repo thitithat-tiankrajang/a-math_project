@@ -2,35 +2,8 @@ import React, { useState } from "react";
 import "./style/AppBag.css";
 
 export default function AppBag(props) {
-    const { onTileClick, tileDistribution, nullCount, setNullCount } = props;
-
-    const createTileBag = () => {
-        const tiles = [];
     
-        // สร้างรายการ tiles จาก tileDistribution
-        for (const [tile, data] of Object.entries(tileDistribution)) {
-            for (let i = 0; i < data.count; i++) { 
-                tiles.push({ name: tile, point: data.point }); // เก็บเป็นวัตถุ
-            }
-        }
-    
-        // สุ่มลำดับของ tiles ด้วย Fisher-Yates Shuffle
-        for (let i = tiles.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-        }
-        
-        // แบ่ง tiles เป็นกลุ่ม ๆ (เช่น 10 ชุด ๆ ละ 10 ตัว)
-        const tileBag = [];
-        for (let i = 0; i < 10; i++) {
-            tileBag.push(tiles.slice(i * 10, (i + 1) * 10));
-        }
-    
-        return tileBag;
-    };
-
-    const [tileBag, setTileBag] = useState(createTileBag());
-    const [selectedBag, setSelectedBag] = useState(false);
+    const { onTileClick, tileBag, setTileBag, nullCount, setNullCount, selectedBag, setSelectedBag} = props;
     const [selectedStack, setSelectedStack] = useState(null);
     const [selectedTiles, setSelectedTiles] = useState([]);
 
