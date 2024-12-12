@@ -291,7 +291,10 @@ function App() {
                   boardState={boardState}
                   onSubmitClick={onSubmitClick}
                 />
-                <AppExchange />
+                <AppExchange 
+                onTileClick={addToRack}
+                tileDistribution={tileDistribution}
+                />
                 <AppPass />
               </div>
             </section>
