@@ -21,13 +21,6 @@ function App() {
   const [selectedTileInBoard, setSelectedTileInBoard] = useState({name: 'empty-cell', point: null, rowIdx: null, colIdx: null});
   const [tileInBoardByTern, setTileInBoardByTern] = useState([]);
 
-  function selectTileFromBoard(row, col) {
-    if (boardState[row][col].data.name !== 'empty-cell') {
-      setSelectedTileInBoard({ name: boardState[row][col].data.name, point: boardState[row][col].data.point, rowIdx: row, colIdx: col }); // เก็บข้อมูล tile
-      setSelectedTileInRack({name: 'empty-cell', point: null, idx: null});
-    }
-  }
-
   // เลือก tile จาก rack
   function onRackClick(index) {
     if (selectedTileInRack.name !== 'empty-cell') {
@@ -50,17 +43,19 @@ function App() {
         const newRack = [...prevRack];
         newRack[index] = { name: selectedTileInBoard.name, point: selectedTileInBoard.point };
   
-        // ลบตำแหน่งเบี้ยออกจาก tileInBoardByTern
-        setTileInBoardByTern(prevTiles =>
-          prevTiles.filter(
-            tile =>
-              !(tile.rowIdx === selectedTileInBoard.rowIdx && tile.colIdx === selectedTileInBoard.colIdx)
-          )
-        );
-  
         setSelectedTileInBoard({ name: 'empty-cell', point: null, rowIdx: null, colIdx: null });
         return newRack;
       });
+
+      setTileInBoardByTern(prevTiles => {
+        const newSetTile = [...prevTiles];
+        newSetTile.filter(
+          tile =>
+            !(tile.rowIdx === selectedTileInBoard.rowIdx && tile.colIdx === selectedTileInBoard.colIdx)
+        )
+        return newSetTile;
+      });
+      
     } else {
       if (rack[index].name !== 'empty-cell') {
         setSelectedTileInRack({ name: rack[index].name, point: rack[index].point, idx: index }); // เก็บข้อมูล tile
@@ -70,6 +65,9 @@ function App() {
   }
 
   function onBoardClick(row, col) {
+    if (boardState[row][col].lock) {
+      return;
+    }
     if (selectedTileInRack.name !== 'empty-cell') {
       setBoardState(prevBoard => {
         const newBoard = [...prevBoard];
@@ -85,7 +83,7 @@ function App() {
             newRack[selectedTileInRack.idx] = { name: 'empty-cell', point: null };
             return newRack;
           });
-  
+
           setSelectedTileInRack({ name: 'empty-cell', point: null, idx: null }); // ล้าง selected tile
         } else {
           // ย้ายเบี้ยจาก rack ไปแทนที่เบี้ยในกระดาน
@@ -134,7 +132,10 @@ function App() {
         return newBoard;
       });
     } else {
-      selectTileFromBoard(row, col);
+      if (boardState[row][col].data.name !== 'empty-cell') {
+        setSelectedTileInBoard({ name: boardState[row][col].data.name, point: boardState[row][col].data.point, rowIdx: row, colIdx: col }); // เก็บข้อมูล tile
+        setSelectedTileInRack({name: 'empty-cell', point: null, idx: null});
+      }
     }
   }
   
@@ -179,9 +180,14 @@ function App() {
     return true;  // หากทุกอย่างถูกต้อง
   }
 
-  function infixToPostfix() {
+  function onSubmitClick() {
+    if (nullCount !== 0) {
+      return;
+    }
+    console.log(tileInBoardByTern);
     let checkRow = true, checkCol = true, firstRow = null, firstCol = null;
     if (tileInBoardByTern.length === 0) {
+      alert("wrong");
       return;
     }
 
@@ -283,7 +289,7 @@ function App() {
               <div className="action">
                 <AppSubmit 
                   boardState={boardState}
-                  onSubmitClick={infixToPostfix}
+                  onSubmitClick={onSubmitClick}
                 />
                 <AppExchange />
                 <AppPass />

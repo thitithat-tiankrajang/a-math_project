@@ -19,7 +19,7 @@ export default function AppBag(props) {
             const j = Math.floor(Math.random() * (i + 1));
             [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
         }
-    
+        
         // แบ่ง tiles เป็นกลุ่ม ๆ (เช่น 10 ชุด ๆ ละ 10 ตัว)
         const tileBag = [];
         for (let i = 0; i < 10; i++) {
