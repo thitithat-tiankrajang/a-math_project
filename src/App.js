@@ -13,9 +13,15 @@ import AppPass from "./components/AppPass.js";
 
 function App() {
   const [firstTern, setFirstTern] = useState(true);
-  const [rack, setRack] = useState(Array(8).fill({ name: "empty-cell", point: null }));
+  const [rack, setRack] = useState(
+    Array(8).fill({ name: "empty-cell", point: null })
+  );
   const [nullCount, setNullCount] = useState(8);
-  const [boardState, setBoardState] = useState(Array.from({ length: 15 }, () => Array(15).fill({ data: { name: "empty-cell", point: null }, lock: false })));
+  const [boardState, setBoardState] = useState(
+    Array.from({ length: 15 }, () =>
+      Array(15).fill({ data: { name: "empty-cell", point: null }, lock: false })
+    )
+  );
   const [selectedTileInRack, setSelectedTileInRack] = useState({
     name: "empty-cell",
     point: null,
@@ -29,7 +35,7 @@ function App() {
   });
 
   const [selectedBag, setSelectedBag] = useState(false);
-  
+
   const [tileInBoardByTern, setTileInBoardByTern] = useState([]);
 
   const createTileBag = () => {
@@ -249,43 +255,125 @@ function App() {
     });
   }
 
-  function isEquationValid(arr) {
-    let equation = arr
-      .map((item) => boardState[item.rowIdx][item.colIdx].name)
-      .join(""); // รวม array เป็น string เดียว
-    // console.log(equation);
-    // let parts = equation.split('=');  // แยก string ตามเครื่องหมาย "="
+  function isValidEquation(equation) {
+    // ฟังก์ชันตรวจสอบความถูกต้องของสมการ
 
-    // if (parts.length < 2) return false;  // ต้องมีเครื่องหมาย "=" อย่างน้อยหนึ่งตัว
+    // แปลงเครื่องหมายพิเศษ
+    function normalizeOperators(arr) {
+      return arr.map((item) => {
+        if (item === "×") return "*";
+        if (item === "÷") return "/";
+        if (item === "−") return "-";
+        return item;
+      });
+    }
 
-    // for (let i = 0; i < parts.length - 1; i++) {
-    //     let leftSide = parts[i].trim();
-    //     let rightSide = parts[i + 1].trim();
+    // ฟังก์ชันแปลง array เป็นสตริงสมการ
+    function arrayToEquation(arr) {
+      return arr
+        .map((item) => (typeof item === "number" ? item.toString() : item))
+        .join("");
+    }
 
-    //     try {
-    //         // คำนวณค่าทั้งสองฝั่งของ "="
-    //         let leftValue = new Function('return ' + leftSide)();
-    //         let rightValue = new Function('return ' + rightSide)();
+    // ฟังก์ชันตรวจสอบกฎข้อที่ 1 เกี่ยวกับการเรียงตัวเลข
+    function checkNumberRules(arr) {
+      const equationStr = arrayToEquation(arr);
 
-    //         if (leftValue !== rightValue) {
-    //             return false;  // หากค่าทั้งสองฝั่งไม่เท่ากัน ให้คืนค่า false
-    //         }
-    //     } catch (error) {
-    //         return false;  // หากเกิดข้อผิดพลาดในขณะคำนวณ ให้คืนค่า false
-    //     }
-    // }
-    return true; // หากทุกอย่างถูกต้อง
+      // ตรวจสอบเลขนำหน้าด้วย 0
+      if (/\b0\d/.test(equationStr)) return false;
+
+      // ตรวจสอบเลขหลายหลัก
+      const numberMatches = equationStr.match(/\d+/g) || [];
+      for (let num of numberMatches) {
+        // ไม่เกิน 3 หลัก
+        if (num.length > 3) return false;
+
+        // ตรวจสอบเลข 10-20 ไม่สามารถติดกับเลขอื่นได้
+        if (/1[0-9]|20/.test(num)) {
+          const index = equationStr.indexOf(num);
+          if (index > 0 && /\d/.test(equationStr[index - 1])) return false;
+          if (
+            index < equationStr.length - num.length &&
+            /\d/.test(equationStr[index + num.length])
+          )
+            return false;
+        }
+      }
+      return true;
+    }
+
+    // ฟังก์ชันประมวลผลสมการ
+    function evaluateEquation(equation) {
+      // แยกส่วนด้วย =
+      const parts = equation.split("=");
+
+      // คำนวณแต่ละส่วน
+      const evaluatedParts = parts.map((part) => {
+        // คำนวณคูณ/หาร ก่อน
+        part = part.replace(
+          /(\d+)\s*[*/]\s*(\d+)/g,
+          (match, a, b, offset, fullString) => {
+            const operator = match.includes("*") ? "*" : "/";
+            return operator === "*"
+              ? parseInt(a) * parseInt(b)
+              : parseInt(a) / parseInt(b);
+          }
+        );
+
+        // คำนวณบวก/ลบ
+        return eval(part);
+      });
+
+      // ตรวจสอบว่าทุกส่วนเท่ากัน
+      return evaluatedParts.every((val) => val === evaluatedParts[0]);
+    }
+
+    // ตรวจสอบเงื่อนไข
+    function validateEquation(arr) {
+      // นอร์มอไลซ์เครื่องหมาย
+      arr = normalizeOperators(arr);
+
+      // ตรวจสอบว่ามี = อย่างน้อย 1 ตัว
+      if (!arr.includes("=")) return false;
+
+      // ตรวจสอบกฎการเรียงตัวเลข
+      if (!checkNumberRules(arr)) return false;
+
+      // แปลง array เป็นสตริง
+      const equationStr = arrayToEquation(arr);
+
+      // ตรวจสอบการประเมินสมการ
+      return evaluateEquation(equationStr);
+    }
+
+    return validateEquation(equation);
   }
 
+  // ตัวอย่างการใช้งาน
+  const testCases = [
+    [7, "−", 5, "=", 3, "−", 1, "=", 6, "÷", 3], // ถูกต้อง
+    [7, "−", 5, "=", 6, "−", 4, "=", 3, "+", 1], // ถูกต้อง
+    [2, "=", 2, "=", 4], // ไม่ถูกต้อง
+    [5, "×", 3, "+", 2, "=", 17], // ทดสอบการคูณ
+    [1, 0, 8, "÷", 2, "+", 3, "=", 5, 7], // ทดสอบการหาร
+    [0, 5, 8, "+", 3], // ทดสอบเลขนำหน้าด้วย 0
+  ];
+
+  testCases.forEach((testCase, index) => {
+    console.log(
+      `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
+    );
+  });
+
   function onSubmitClick() {
-    if (firstTern && boardState[7][7].data.name === 'empty-cell') {
+    if (firstTern && boardState[7][7].data.name === "empty-cell") {
       alert("wrong");
       return;
     }
     if (nullCount !== 0) {
       return;
     }
-    
+
     console.log(tileInBoardByTern);
     let checkRow = true,
       checkCol = true,
@@ -315,7 +403,11 @@ function App() {
       let inline = true;
       if (checkRow) {
         sortedArr = [...tileInBoardByTern].sort((a, b) => a.colIdx - b.colIdx);
-        for ( let i = sortedArr[0].colIdx; i <= sortedArr[sortedArr.length - 1].colIdx; i++) {
+        for (
+          let i = sortedArr[0].colIdx;
+          i <= sortedArr[sortedArr.length - 1].colIdx;
+          i++
+        ) {
           if (boardState[firstRow][i].data.name === "empty-cell") {
             inline = false;
           }
@@ -336,7 +428,11 @@ function App() {
         }
       } else {
         sortedArr = [...tileInBoardByTern].sort((a, b) => a.rowIdx - b.rowIdx);
-        for ( let i = sortedArr[0].rowIdx; i <= sortedArr[sortedArr.length - 1].rowIdx; i++) {
+        for (
+          let i = sortedArr[0].rowIdx;
+          i <= sortedArr[sortedArr.length - 1].rowIdx;
+          i++
+        ) {
           if (boardState[i][firstCol].data.name === "empty-cell") {
             inline = false;
           }
