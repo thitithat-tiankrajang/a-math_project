@@ -9,6 +9,7 @@
 
 .row {
     display: grid;
+    width: 100%;
     grid-template-columns: repeat(15, 49px);
 }
 
@@ -19,15 +20,11 @@
     justify-content: center;
     align-items: center;
     font-size: 13px;
-    /* font-weight: bold; */
     border: 1px solid #000000;
     background-color: #60b7ff;
     user-select: none;
     cursor: pointer;
-}
-  
-.cell:hover {
-    background-color: #ddd;
+    z-index: 0;
 }
 
 .tile {
@@ -57,7 +54,7 @@
     width: 45px;
     height: 45px;
     border-radius: 0px;
-    border: 1px solid #444444;
+    border: 1px solid #434343;
     background-color: #333333; 
     transform: translate(0,0);
 }
@@ -81,23 +78,48 @@
 
 .Px1 {
     background-color: #f4f4f4;
-    /* #7c7c7c */
+}
+
+.Px1:hover {
+    background-color: #dfdfdf;
 }
 
 .Px2 {
     background-color: #ffc251;
 }
 
+.Px2:hover {
+    background-color: #ffc353df;
+}
+
 .Px3 .str {
     background-color: #4dafff;
     color: white;
+    z-index: 1;
+}
+
+.Px3:hover {
+    background-color: #4dafffe2;
+}
+
+.str:hover {
+    background-color: #4dafffe2;
 }
 
 .Ex2 {
     background-color: #ffff77;
 }
 
+.Ex2:hover {
+    background-color: #ffff77e5;
+}
+
 .Ex3 {
     background-color: #ff4949;
+    color: white;
+}
+
+.Ex3:hover {
+    background-color: #ff4949dc;
     color: white;
 }

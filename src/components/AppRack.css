@@ -38,6 +38,10 @@
     user-select: none;
 }
 
+.front-tile:active {    
+    background-color: #d3d3d3;
+}
+
 .empty-tile {
     width: 50px;
     height: 50px;

@@ -6,13 +6,13 @@ function AppRack({ rack, onTileClick, selectedTileInRack }) {
       {rack.map((tile, index) => (
         <div
           key={index}
-          className={`rack-cell ${tile.name === '21' ? "empty-tile" : "front-tile"} ${
+          className={`rack-cell ${tile.name === 'empty-cell' ? "empty-tile" : "front-tile"} ${
             selectedTileInRack?.idx === index ? "selected" : ""
           }`}
           onClick={() => onTileClick(index)}
         >
-          <span className="tile-name">{tile.name === '21' ? "" : tile.name}</span>
-          <span className="tile-point">{tile.name === '21' ? "" : tile.point}</span>
+          <span className="tile-name">{tile.name === 'empty-cell' ? "" : tile.name}</span>
+          <span className="tile-point">{tile.name === 'empty-cell' ? "" : tile.point}</span>
         </div>
       ))}
     </div>
@@ -20,4 +20,3 @@ function AppRack({ rack, onTileClick, selectedTileInRack }) {
 }
 
 export default AppRack;
-

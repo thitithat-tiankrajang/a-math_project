@@ -14,7 +14,7 @@ const AppBoard = ({ board, boardState, onCellClick, selectedTileInBoard}) => {
     }
   }
   const createElementInCell = (rowIndex, cellIndex) => {
-    if (boardState[rowIndex][cellIndex].data.name === '21') {
+    if (boardState[rowIndex][cellIndex].data.name === 'empty-cell') {
       return (
         board[rowIndex][cellIndex] === "str" ? ( <img src="./star-image.png" alt="Star" className="str-image" />) 
           : getNameFromClass(board[rowIndex][cellIndex])
@@ -28,8 +28,8 @@ const AppBoard = ({ board, boardState, onCellClick, selectedTileInBoard}) => {
             ${(boardState[rowIndex][cellIndex].lock) 
               ? "locked" : ""}`}
         >
-          <span className="tile-name">{boardState[rowIndex][cellIndex].data.name === '21' ? "" : boardState[rowIndex][cellIndex].data.name}</span>
-          <span className="tile-point">{boardState[rowIndex][cellIndex].data.name === '21' ? "" : boardState[rowIndex][cellIndex].data.point}</span>
+          <span className="tile-name">{boardState[rowIndex][cellIndex].data.name === 'empty-cell' ? "" : boardState[rowIndex][cellIndex].data.name}</span>
+          <span className="tile-point">{boardState[rowIndex][cellIndex].data.name === 'empty-cell' ? "" : boardState[rowIndex][cellIndex].data.point}</span>
         </div>
       );
     }
