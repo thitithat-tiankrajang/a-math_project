@@ -16,17 +16,20 @@ function App() {
   const [rack, setRack] = useState(
     Array(8).fill({ name: "empty-cell", point: null })
   );
+
   const [nullCount, setNullCount] = useState(8);
   const [boardState, setBoardState] = useState(
     Array.from({ length: 15 }, () =>
       Array(15).fill({ data: { name: "empty-cell", point: null }, lock: false })
     )
   );
+
   const [selectedTileInRack, setSelectedTileInRack] = useState({
     name: "empty-cell",
     point: null,
     idx: null,
   });
+
   const [selectedTileInBoard, setSelectedTileInBoard] = useState({
     name: "empty-cell",
     point: null,
@@ -62,6 +65,7 @@ function App() {
 
     return tileBag;
   };
+  
   const [tileBag, setTileBag] = useState(createTileBag());
   // เลือก tile จาก rack
   function onRackClick(index) {
