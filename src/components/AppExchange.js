@@ -1,4 +1,4 @@
-import "./AppExchange.css"
+import "./style/AppExchange.css"
 
 function AppExchange() {
     return (

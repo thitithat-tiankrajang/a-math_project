@@ -1,5 +1,5 @@
 import React from "react";
-import "./AppBoard.css";
+import "./style/AppBoard.css";
 
 const AppBoard = ({ board, boardState, onCellClick, selectedTileInBoard}) => {
 

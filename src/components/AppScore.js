@@ -1,4 +1,4 @@
-import './AppScore.css';
+import './style/AppScore.css';
 
 function AppScore() {
 

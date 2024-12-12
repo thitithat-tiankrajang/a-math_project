@@ -1,4 +1,4 @@
-import "./AppPass.css"
+import "./style/AppPass.css"
 
 function AppPass() {
     return (

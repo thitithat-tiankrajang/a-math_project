@@ -1,4 +1,4 @@
-import "./AppSubmit.css"
+import "./style/AppSubmit.css"
 
 function AppSubmit({ boardState, onSubmitClick }) {
     return (

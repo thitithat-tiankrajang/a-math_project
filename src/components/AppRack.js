@@ -1,4 +1,4 @@
-import "./AppRack.css";
+import "./style/AppRack.css";
 
 function AppRack({ rack, onTileClick, selectedTileInRack }) {
   return (
