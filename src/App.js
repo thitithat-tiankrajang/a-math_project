@@ -1,4 +1,3 @@
-//hahaha 
 import { useState } from "react";
 import './App.css';
 import AppHeader from './components/AppHeader.js';
