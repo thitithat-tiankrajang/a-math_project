@@ -152,7 +152,9 @@ function App() {
       });
     });
   }
-
+  function Hee() {
+    return 0 ;
+  }
   function isEquationValid(arr) {
     let equation = arr.map(item => boardState[item.rowIdx][item.colIdx].name).join('');  // รวม array เป็น string เดียว
     // console.log(equation);
