@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+//hahaha 
+import { useState } from "react";
 import './App.css';
 import AppHeader from './components/AppHeader.js';
 import AppBoard from './components/AppBoard.js';
@@ -154,7 +155,7 @@ function App() {
   }
 
   function isEquationValid(arr) {
-    let equation = arr.map(item => boardState[item.rowIdx][item.colIdx].name).join('');  // รวม array เป็น string เดียว
+    // let equation = arr.map(item => boardState[item.rowIdx][item.colIdx].name).join('');  // รวม array เป็น string เดียว
     // console.log(equation);
     // let parts = equation.split('=');  // แยก string ตามเครื่องหมาย "="
 
