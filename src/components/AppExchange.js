@@ -2,131 +2,153 @@ import React, { useState } from "react";
 import "./style/AppExchange.css";
 
 function AppExchange(props) {
-    const { onTileClick, tileBag, setTileBag, rack, setRack, openBag, setOpenBag, nullCount, setNullCount, randomTileBag } = props;
+  const {
+    tileBag,
+    setTileBag,
+    rack,
+    setRack,
+    openBag,
+    setOpenBag,
+    nullCount,
+    setNullCount,
+    randomTileBag,
+  } = props;
 
-    const [exchangeMode, setExchangeMode] = useState(false);
-    const [exchangeTiles, setExchangeTiles] = useState([]);
+  const [exchangeMode, setExchangeMode] = useState(false);
+  const [exchangeTiles, setExchangeTiles] = useState([]);
 
-    // Function to confirm exchange
-    const confirmExchange = () => {
-        // Create copies of the rack
-        let updatedRack = [...rack];
+  // Function to confirm exchange
+  const confirmExchange = () => {
+    // Create copies of the rack
+    let updatedRack = [...rack];
 
-        // Collect tiles to be exchanged
-        const exchangedTiles = exchangeTiles.map(index => {
-            const tile = updatedRack[index.idx];
-            
-            // Set the tile in the rack to "empty-cell"
-            updatedRack[index.idx] = { name: "empty-cell", point: 0 };
-            
-            return tile;
-        });
+    // Collect tiles to be exchanged
+    const exchangedTiles = exchangeTiles.map((index) => {
+      const tile = updatedRack[index.idx];
 
-        setNullCount(exchangeTiles.length);
+      // Set the tile in the rack to "empty-cell"
+      updatedRack[index.idx] = { name: "empty-cell", point: 0 };
 
-        setRack(updatedRack);
+      return tile;
+    });
 
-        setOpenBag(true);
+    setNullCount(exchangeTiles.length);
 
-        return exchangedTiles;
-    };
+    setRack(updatedRack);
 
-    // Toggle tile selection in the rack
-    const toggleRackTileSelection = (index) => {
-        // Only allow selection of non-empty tiles
-        if (rack[index].name === 'empty-cell') return;
+    setOpenBag(true);
 
-        setExchangeTiles((prev) => {
-            if (prev.some((item) => item.idx === index)) {
-                return prev.filter((item) => item.idx !== index);
-            } else {
-                return [...prev, { data: { name: rack[index].name, point: rack[index].point }, idx: index }];
-            }
-        });        
-    };
+    return exchangedTiles;
+  };
 
-    // Start the exchange process
-    const startExchange = () => {
-        // Only start exchange if there are no null cells and not already in exchange mode
-        if (nullCount === 0 && !exchangeMode) {
-            setExchangeMode(true);
-            setExchangeTiles([]);
-        }
-    };
+  // Toggle tile selection in the rack
+  const toggleRackTileSelection = (index) => {
+    // Only allow selection of non-empty tiles
+    if (rack[index].name === "empty-cell") return;
 
-    // Cancel the exchange process and update the bag
-    const cancelExchange = () => {
-        // Create a new array to hold the updated openBag
-        
-        let updatedBag = [];
+    setExchangeTiles((prev) => {
+      if (prev.some((item) => item.idx === index)) {
+        return prev.filter((item) => item.idx !== index);
+      } else {
+        return [
+          ...prev,
+          {
+            data: { name: rack[index].name, point: rack[index].point },
+            idx: index,
+          },
+        ];
+      }
+    });
+  };
 
-        tileBag.forEach(stackIndex => {
-            stackIndex.forEach(tileIndex => {
-                updatedBag.push(tileIndex);
-            })
-        }) 
+  // Start the exchange process
+  const startExchange = () => {
+    // Only start exchange if there are no null cells and not already in exchange mode
+    if (nullCount === 0 && !exchangeMode) {
+      setExchangeMode(true);
+      setExchangeTiles([]);
+    }
+  };
 
-        // Loop through the tileBag and add exchanged tiles back to the bag
-        exchangeTiles.forEach(tile => {
-            updatedBag.push({name: tile.data.name, point: tile.data.point});
-        });
+  // Cancel the exchange process and update the bag
+  const cancelExchange = () => {
+    // Create a new array to hold the updated openBag
 
-        // Update the openBag with the new array
-        setTileBag(randomTileBag(updatedBag));
+    let updatedBag = [];
 
-        // Reset the state
-        setExchangeMode(false);
-        setExchangeTiles([]);
-    };
+    tileBag.forEach((stackIndex) => {
+      stackIndex.forEach((tileIndex) => {
+        updatedBag.push(tileIndex);
+      });
+    });
 
-    return (
-        <div className="exchange-instructions">
-            <div 
-                className="app-exchange"
-                onClick={(!exchangeMode && nullCount === 0) ? startExchange : undefined}
-            >
-                EXCHANGE
-            </div>
-            {exchangeMode && (
-                <div className="exchange-ui">
-                    <div className="rack">
-                        {rack && rack.length > 0 && rack.map((tile, index) => (
-                            <div
-                                key={index}
-                                className={`rack-tile 
-                                    ${tile.name === 'empty-cell' ? 'empty' : ''} 
-                                    ${exchangeTiles.some((item) => item.idx === index) ? "selected" : ""}`}
-                                onClick={() => toggleRackTileSelection(index)}
-                            >
-                                {tile.name !== 'empty-cell' ? (
-                                    <>
-                                        {tile.name}
-                                        <div className="tile-point">{tile.point}</div>
-                                    </>
-                                ) : (
-                                    <div className="empty-tile"></div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+    // Loop through the tileBag and add exchanged tiles back to the bag
+    exchangeTiles.forEach((tile) => {
+      updatedBag.push({ name: tile.data.name, point: tile.data.point });
+    });
 
-                    <div className="exchange-buttons">
-                        <button 
-                            onClick={confirmExchange}
-                            disabled={exchangeTiles.length === 0}
-                        >
-                            Confirm
-                        </button>
-                        <button 
-                            onClick={cancelExchange}
-                        >
-                            Cancel
-                        </button>
-                    </div>
+    // Update the openBag with the new array
+    setTileBag(randomTileBag(updatedBag));
+
+    // Reset the state
+    setExchangeMode(false);
+    setExchangeTiles([]);
+  };
+
+  return (
+    <div className="exchange-instructions">
+      <div
+        className="app-exchange"
+        onClick={!exchangeMode && nullCount === 0 ? startExchange : undefined}
+      >
+        EXCHANGE
+      </div>
+      {exchangeMode && (
+        <div className="exchange-ui">
+          <div className="rack">
+            {rack &&
+              rack.length > 0 &&
+              rack.map((tile, index) => (
+                <div
+                  key={index}
+                  className={`rack-tile 
+                                    ${
+                                      tile.name === "empty-cell" ? "empty" : ""
+                                    } 
+                                    ${
+                                      exchangeTiles.some(
+                                        (item) => item.idx === index
+                                      )
+                                        ? "selected"
+                                        : ""
+                                    }`}
+                  onClick={() => toggleRackTileSelection(index)}
+                >
+                  {tile.name !== "empty-cell" ? (
+                    <>
+                      {tile.name}
+                      <div className="tile-point">{tile.point}</div>
+                    </>
+                  ) : (
+                    <div className="empty-tile"></div>
+                  )}
                 </div>
-            )}
+              ))}
+          </div>
+
+          <div className="exchange-buttons">
+            <button
+              onClick={confirmExchange}
+              disabled={exchangeTiles.length === 0}
+            >
+              Confirm
+            </button>
+            <button onClick={cancelExchange}>Cancel</button>
+          </div>
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
 export default AppExchange;
