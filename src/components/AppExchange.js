@@ -16,6 +16,7 @@ function AppExchange(props) {
 
   const [exchangeMode, setExchangeMode] = useState(false);
   const [exchangeTiles, setExchangeTiles] = useState([]);
+  const [exchangeConfirmed, setExchangeConfirmed] = useState(false); // Tracks if the exchange is confirmed
 
   // Function to confirm exchange
   const confirmExchange = () => {
@@ -33,10 +34,10 @@ function AppExchange(props) {
     });
 
     setNullCount(exchangeTiles.length);
-
     setRack(updatedRack);
-
     setOpenBag(true);
+
+    setExchangeConfirmed(true); // Mark the exchange as confirmed
 
     return exchangedTiles;
   };
@@ -72,8 +73,14 @@ function AppExchange(props) {
 
   // Cancel the exchange process and update the bag
   const cancelExchange = () => {
-    // Create a new array to hold the updated openBag
+    // Reset the state
+    setExchangeMode(false);
+    setExchangeTiles([]);
+    setExchangeConfirmed(false); // Reset exchange confirmation
+  };
 
+  const finishExchange = () => {
+    // Create a new array to hold the updated openBag
     let updatedBag = [];
 
     tileBag.forEach((stackIndex) => {
@@ -93,13 +100,14 @@ function AppExchange(props) {
     // Reset the state
     setExchangeMode(false);
     setExchangeTiles([]);
-  };
+    setExchangeConfirmed(false); // Reset exchange confirmation
+  }
 
   return (
     <div className="exchange-instructions">
       <div
         className="app-exchange"
-        onClick={!exchangeMode && nullCount === 0 ? startExchange : undefined}
+        onClick={!exchangeMode && nullCount === 0 && !exchangeConfirmed ? startExchange : undefined} // Prevent start if exchange is confirmed
       >
         EXCHANGE
       </div>
@@ -112,16 +120,16 @@ function AppExchange(props) {
                 <div
                   key={index}
                   className={`rack-tile 
-                                    ${
-                                      tile.name === "empty-cell" ? "empty" : ""
-                                    } 
-                                    ${
-                                      exchangeTiles.some(
-                                        (item) => item.idx === index
-                                      )
-                                        ? "selected"
-                                        : ""
-                                    }`}
+                        ${
+                            tile.name === "empty-cell" ? "empty" : ""
+                        } 
+                        ${
+                            exchangeTiles.some(
+                            (item) => item.idx === index
+                            )
+                            ? "selected"
+                            : ""
+                        }`}
                   onClick={() => toggleRackTileSelection(index)}
                 >
                   {tile.name !== "empty-cell" ? (
@@ -139,11 +147,19 @@ function AppExchange(props) {
           <div className="exchange-buttons">
             <button
               onClick={confirmExchange}
-              disabled={exchangeTiles.length === 0}
+              disabled={exchangeTiles.length === 0 || exchangeConfirmed} // Disable confirm if already confirmed
             >
               Confirm
             </button>
-            <button onClick={cancelExchange}>Cancel</button>
+            <button onClick={cancelExchange} disabled={exchangeConfirmed}> {/* Disable cancel after confirmation */}
+              Cancel
+            </button>
+            <button
+                onClick={finishExchange}
+                disabled={!exchangeConfirmed||nullCount!=0}
+            >
+                Finish
+            </button>
           </div>
         </div>
       )}
