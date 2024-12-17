@@ -3,12 +3,12 @@ import "./style/AppBag.css";
 
 export default function AppBag(props) {
     
-    const { onTileClick, tileBag, setTileBag, nullCount, setNullCount, selectedBag, setSelectedBag} = props;
+    const { onTileClick, tileBag, setTileBag, nullCount, setNullCount, openBag, setOpenBag} = props;
     const [selectedStack, setSelectedStack] = useState(null);
     const [selectedTiles, setSelectedTiles] = useState([]);
 
     function openStackPopup() {
-        setSelectedBag(true);
+        setOpenBag(true);
     }
 
     function openTilePopup(index) {
@@ -17,7 +17,7 @@ export default function AppBag(props) {
     }
 
     function closePopupStack() {
-        setSelectedBag(false);
+        setOpenBag(false);
     }
 
     function closePopupTiles() {
@@ -73,7 +73,7 @@ export default function AppBag(props) {
                 Open Tile Bag
             </div>
 
-            {selectedBag && !selectedStack && (
+            {openBag && !selectedStack && (
                 <div className="popup-stack">
                     <button className="close-popup-stack-button" onClick={closePopupStack}>
                         CLOSE

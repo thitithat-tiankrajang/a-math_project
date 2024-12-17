@@ -37,20 +37,20 @@ function App() {
     colIdx: null,
   });
 
-  const [selectedBag, setSelectedBag] = useState(false);
+  const [openBag, setOpenBag] = useState(false);
 
   const [tileInBoardByTern, setTileInBoardByTern] = useState([]);
 
-  const createTileBag = () => {
-    const tiles = [];
-
-    // สร้างรายการ tiles จาก tileDistribution
-    for (const [tile, data] of Object.entries(tileDistribution)) {
-      for (let i = 0; i < data.count; i++) {
-        tiles.push({ name: tile, point: data.point }); // เก็บเป็นวัตถุ
-      }
+  const startTileBag = [];
+  for (const [tile, data] of Object.entries(tileDistribution)) {
+    for (let i = 0; i < data.count; i++) {
+      startTileBag.push({ name: tile, point: data.point }); // เก็บเป็นวัตถุ
     }
+  }
 
+  const [tileBag, setTileBag] = useState(randomTileBag(startTileBag));
+
+  function randomTileBag(tiles) {
     // สุ่มลำดับของ tiles ด้วย Fisher-Yates Shuffle
     for (let i = tiles.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -65,8 +65,7 @@ function App() {
 
     return tileBag;
   };
-  
-  const [tileBag, setTileBag] = useState(createTileBag());
+
   // เลือก tile จาก rack
   function onRackClick(index) {
     if (selectedTileInRack.name !== "empty-cell") {
@@ -363,11 +362,11 @@ function App() {
     [0, 5, 8, "+", 3], // ทดสอบเลขนำหน้าด้วย 0
   ];
 
-  testCases.forEach((testCase, index) => {
-    console.log(
-      `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
-    );
-  });
+  // testCases.forEach((testCase, index) => {
+  //   console.log(
+  //     `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
+  //   );
+  // });
 
   function onSubmitClick() {
     if (firstTern && boardState[7][7].data.name === "empty-cell") {
@@ -489,8 +488,8 @@ function App() {
                 setTileBag={setTileBag}
                 nullCount={nullCount}
                 setNullCount={setNullCount}
-                selectedBag={selectedBag}
-                setSelectedBag={setSelectedBag}
+                openBag={openBag}
+                setOpenBag={setOpenBag}
               />
             </section>
             <section className="bottom-section">
@@ -510,10 +509,11 @@ function App() {
                   setTileBag={setTileBag}
                   rack={rack}
                   setRack={setRack}
-                  selectedBag={selectedBag}
-                  setSelectedBag={setSelectedBag}
+                  openBag={openBag}
+                  setOpenBag={setOpenBag}
                   nullCount={nullCount}
                   setNullCount={setNullCount}
+                  randomTileBag={randomTileBag}
                 />
                 <AppPass />
               </div>

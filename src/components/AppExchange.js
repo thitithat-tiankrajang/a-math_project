@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import "./style/AppExchange.css";
 
 function AppExchange(props) {
-    const { onTileClick, rack, setRack, selectedBag, setSelectedBag, nullCount, setNullCount } = props;
+    const { onTileClick, tileBag, setTileBag, rack, setRack, openBag, setOpenBag, nullCount, setNullCount, randomTileBag } = props;
 
     const [exchangeMode, setExchangeMode] = useState(false);
     const [exchangeTiles, setExchangeTiles] = useState([]);
-    const [tileBag, setTileBag] = useState([]) ;
 
     // Function to confirm exchange
     const confirmExchange = () => {
@@ -15,24 +14,20 @@ function AppExchange(props) {
 
         // Collect tiles to be exchanged
         const exchangedTiles = exchangeTiles.map(index => {
-            const tile = updatedRack[index];
+            const tile = updatedRack[index.idx];
             
             // Set the tile in the rack to "empty-cell"
-            updatedRack[index] = { name: "empty-cell", point: 0 };
+            updatedRack[index.idx] = { name: "empty-cell", point: 0 };
             
             return tile;
         });
 
-        // Set the number of null cells to exchange
         setNullCount(exchangeTiles.length);
 
-        // Update the rack 
         setRack(updatedRack);
 
-        // Mark the exchange as confirmed
-        setSelectedBag(true);
+        setOpenBag(true);
 
-        // Return exchangedTiles for parent component to handle
         return exchangedTiles;
     };
 
@@ -42,12 +37,12 @@ function AppExchange(props) {
         if (rack[index].name === 'empty-cell') return;
 
         setExchangeTiles((prev) => {
-            if (prev.includes(index)) {
-                return prev.filter((i) => i !== index);
+            if (prev.some((item) => item.idx === index)) {
+                return prev.filter((item) => item.idx !== index);
             } else {
-                return [...prev, index];
+                return [...prev, { data: { name: rack[index].name, point: rack[index].point }, idx: index }];
             }
-        });
+        });        
     };
 
     // Start the exchange process
@@ -61,17 +56,23 @@ function AppExchange(props) {
 
     // Cancel the exchange process and update the bag
     const cancelExchange = () => {
-        // Create a new array to hold the updated selectedBag
-        let updatedBag = [...tileBag];
+        // Create a new array to hold the updated openBag
+        
+        let updatedBag = [];
+
+        tileBag.forEach(stackIndex => {
+            stackIndex.forEach(tileIndex => {
+                updatedBag.push(tileIndex);
+            })
+        }) 
 
         // Loop through the tileBag and add exchanged tiles back to the bag
-        exchangeTiles.forEach(tileIndex => {
-            const exchangedTile = rack[tileIndex];
-            updatedBag.push(exchangedTile);
+        exchangeTiles.forEach(tile => {
+            updatedBag.push({name: tile.data.name, point: tile.data.point});
         });
 
-        // Update the selectedBag with the new array
-        setTileBag(updatedBag);
+        // Update the openBag with the new array
+        setTileBag(randomTileBag(updatedBag));
 
         // Reset the state
         setExchangeMode(false);
@@ -84,7 +85,7 @@ function AppExchange(props) {
                 className="app-exchange"
                 onClick={(!exchangeMode && nullCount === 0) ? startExchange : undefined}
             >
-                Exchange
+                EXCHANGE
             </div>
             {exchangeMode && (
                 <div className="exchange-ui">
@@ -94,7 +95,7 @@ function AppExchange(props) {
                                 key={index}
                                 className={`rack-tile 
                                     ${tile.name === 'empty-cell' ? 'empty' : ''} 
-                                    ${exchangeTiles.includes(index) ? "selected" : ""}`}
+                                    ${exchangeTiles.some((item) => item.idx === index) ? "selected" : ""}`}
                                 onClick={() => toggleRackTileSelection(index)}
                             >
                                 {tile.name !== 'empty-cell' ? (
@@ -103,7 +104,7 @@ function AppExchange(props) {
                                         <div className="tile-point">{tile.point}</div>
                                     </>
                                 ) : (
-                                    <div className="empty-tile">Empty</div>
+                                    <div className="empty-tile"></div>
                                 )}
                             </div>
                         ))}
@@ -116,7 +117,11 @@ function AppExchange(props) {
                         >
                             Confirm
                         </button>
-                        <button onClick={cancelExchange}>Cancel</button>
+                        <button 
+                            onClick={cancelExchange}
+                        >
+                            Cancel
+                        </button>
                     </div>
                 </div>
             )}
