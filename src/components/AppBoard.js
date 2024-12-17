@@ -141,22 +141,6 @@ function AppBoard(props) {
     }
   }
 
-  function addToRack(tiles) {
-    tiles.forEach((tile) => {
-      setRack((prevRack) => {
-        const emptyIndex = prevRack.findIndex(
-          (cell) => cell.name === "empty-cell"
-        );
-        if (emptyIndex !== -1) {
-          const newRack = [...prevRack];
-          newRack[emptyIndex] = tile;
-          return newRack;
-        }
-        return prevRack;
-      });
-    });
-  }
-
   const createElementInCell = (rowIndex, cellIndex) => {
     if (boardState[rowIndex][cellIndex].data.name === "empty-cell") {
       return board[rowIndex][cellIndex] === "str" ? (

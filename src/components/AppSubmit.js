@@ -1,4 +1,5 @@
 import "./style/AppSubmit.css";
+import * as math from "mathjs";
 
 function AppSubmit(props) {
   const {
@@ -18,68 +19,74 @@ function AppSubmit(props) {
       return arr.map((item) => {
         if (item === "×") return "*";
         if (item === "÷") return "/";
+        if (item === "−") return "-";
         return item;
       });
     }
 
-    // ฟังก์ชันแปลง array เป็นสตริงสมการ
-    function arrayToEquation(arr) {
-      return arr
-        .map((item) => (typeof item === "number" ? item.toString() : item))
-        .join("");
-    }
-
     // ฟังก์ชันตรวจสอบกฎข้อที่ 1 เกี่ยวกับการเรียงตัวเลข
     function checkNumberRules(arr) {
-      const equationStr = arrayToEquation(arr);
+      // แปลงทุก item เป็นสตริง
+      const processedArr = arr.map((item) => String(item));
 
-      // ตรวจสอบเลขนำหน้าด้วย 0
-      if (/\b0\d/.test(equationStr)) return false;
+      // ตรวจสอบกลุ่มตัวเลข
+      const numberGroups = processedArr.join("").match(/\d+/g) || [];
 
-      // ตรวจสอบเลขหลายหลัก
-      const numberMatches = equationStr.match(/\d+/g) || [];
-      for (let num of numberMatches) {
-        // ไม่เกิน 3 หลัก
-        if (num.length > 3) return false;
-
-        // ตรวจสอบเลข 10-20 ไม่สามารถติดกับเลขอื่นได้
-        if (/1[0-9]|20/.test(num)) {
-          const index = equationStr.indexOf(num);
-          if (index > 0 && /\d/.test(equationStr[index - 1])) return false;
-          if (
-            index < equationStr.length - num.length &&
-            /\d/.test(equationStr[index + num.length])
-          )
-            return false;
+      for (let group of numberGroups) {
+        // ตรวจสอบ 0 นำหน้าในกลุ่มตัวเลข
+        if (/^0\d/.test(group)) {
+          // ถ้าเป็นเลขสองหลักหรือสามหลักที่เริ่มต้นด้วย 0 ให้ปฏิเสธ
+          return false;
         }
       }
+
+      for (let i = 0; i < processedArr.length; i++) {
+        const currentItem = processedArr[i];
+
+        // ตรวจสอบเลขสองหลัก
+        if (/^(10|11|12|13|14|15|16|17|18|19|20)$/.test(currentItem)) {
+          // ถ้าเป็นเลข 10-20 ห้ามติดกับเลขอื่น
+          if (i > 0 && /^\d$/.test(processedArr[i - 1])) return false;
+          if (i < processedArr.length - 1 && /^\d$/.test(processedArr[i + 1]))
+            return false;
+        }
+
+        // ตรวจสอบเลขหลายหลัก
+        if (/^\d{4,}$/.test(currentItem)) return false;
+      }
+
       return true;
     }
 
-    // ฟังก์ชันประมวลผลสมการ
-    function evaluateEquation(equation) {
-      // แยกส่วนด้วย =
-      const parts = equation.split("=");
+    // ฟังก์ชันคำนวณสมการอย่างปลอดภัย
+    function safeEvaluate(part) {
+      // แยกสมการออกเป็นส่วนๆ
+      const tokens = part.match(/\d+|[+\-*/]/g) || [];
+      let result = parseInt(tokens[0]);
 
-      // คำนวณแต่ละส่วน
-      const evaluatedParts = parts.map((part) => {
-        // คำนวณคูณ/หาร ก่อน
-        part = part.replace(
-          /(\d+)\s*[*/]\s*(\d+)/g,
-          (match, a, b, offset, fullString) => {
-            const operator = match.includes("*") ? "*" : "/";
-            return operator === "*"
-              ? parseInt(a) * parseInt(b)
-              : parseInt(a) / parseInt(b);
-          }
-        );
+      for (let i = 1; i < tokens.length; i += 2) {
+        const operator = tokens[i];
+        const operand = parseInt(tokens[i + 1]);
 
-        // คำนวณบวก/ลบ
-        return eval(part);
-      });
+        switch (operator) {
+          case "+":
+            result += operand;
+            break;
+          case "-":
+            result -= operand;
+            break;
+          case "*":
+            result *= operand;
+            break;
+          case "/":
+            // ตรวจสอบการหารด้วยศูนย์
+            if (operand === 0) return NaN;
+            result = Math.floor(result / operand);
+            break;
+        }
+      }
 
-      // ตรวจสอบว่าทุกส่วนเท่ากัน
-      return evaluatedParts.every((val) => val === evaluatedParts[0]);
+      return result;
     }
 
     // ตรวจสอบเงื่อนไข
@@ -93,11 +100,25 @@ function AppSubmit(props) {
       // ตรวจสอบกฎการเรียงตัวเลข
       if (!checkNumberRules(arr)) return false;
 
-      // แปลง array เป็นสตริง
-      const equationStr = arrayToEquation(arr);
+      // แยกสมการด้วย =
+      const parts = [];
+      let currentPart = [];
 
-      // ตรวจสอบการประเมินสมการ
-      return evaluateEquation(equationStr);
+      for (let item of arr) {
+        if (item === "=") {
+          parts.push(currentPart.join(""));
+          currentPart = [];
+        } else {
+          currentPart.push(item);
+        }
+      }
+      parts.push(currentPart.join(""));
+
+      // ประเมินแต่ละส่วน
+      const evaluatedParts = parts.map(safeEvaluate);
+
+      // ตรวจสอบว่าทุกส่วนเท่ากัน
+      return evaluatedParts.every((val) => val === evaluatedParts[0]);
     }
 
     return validateEquation(equation);
@@ -105,19 +126,24 @@ function AppSubmit(props) {
 
   // ตัวอย่างการใช้งาน
   const testCases = [
-    [7, "−", 5, "=", 3, "−", 1, "=", 6, "÷", 3], // ถูกต้อง
-    [7, "−", 5, "=", 6, "−", 4, "=", 3, "+", 1], // ถูกต้อง
-    [2, "=", 2, "=", 4], // ไม่ถูกต้อง
-    [5, "×", 3, "+", 2, "=", 17], // ทดสอบการคูณ
-    [1, 0, 8, "÷", 2, "+", 3, "=", 5, 7], // ทดสอบการหาร
-    [0, 5, 8, "+", 3], // ทดสอบเลขนำหน้าด้วย 0
+    ["2", "=", "2", "=", "2"],
+    ["7", "-", "5", "=", "3", "-", "1", "=", "6", "÷", "3"],
+    ["7", "-", "5", "=", "6", "-", "4", "=", "3", "+", "1"],
+    ["2", "=", "2", "=", "4"],
+    ["5", "×", "3", "+", "2", "=", "17"],
+    ["1", "0", "8", "÷", "2", "+", "3", "=", "5", "7"],
+    ["0", "5", "+", "0", "8", "=", "1", "3"],
+    ["1", "÷", "3", "+", "2", "÷", "3", "=", "1"],
+    ["19", "÷", "13", "+", "1", "4", "÷", "2", "6", "=", "2"],
+    ["-", "5", "+", "9", "=", "4"],
+    ["-", "5", "-", "-", "9", "=", "4"],
   ];
 
-  // testCases.forEach((testCase, index) => {
-  //   console.log(
-  //     `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
-  //   );
-  // });
+  testCases.forEach((testCase, index) => {
+    console.log(
+      `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
+    );
+  });
 
   function onSubmitClick() {
     if (firstTern && boardState[7][7].data.name === "empty-cell") {
