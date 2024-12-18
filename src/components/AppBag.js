@@ -188,8 +188,8 @@ export default function AppBag(props) {
                     toggleSelectedTile(selectedStack.stackIndex, tileIndex)
                   }
                 >
-                  {tile.name}
-                  <div className="tile-point">{tile.point}</div>
+                  {/* {tile.name}
+                  <div className="tile-point">{tile.point}</div> */}
                 </div>
               ))}
             </div>

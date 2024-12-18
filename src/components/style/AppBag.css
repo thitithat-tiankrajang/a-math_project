@@ -110,8 +110,8 @@
     position: relative;
     width: 50px;
     height: 50px;
-    background-color: #000000;
-    border: 1px solid #a0522d;
+    background-color: #1c4052;
+    border: 1px solid #00a2ff;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -131,6 +131,14 @@
 .back-tile:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.back-tile:active {
+    background-color: #132c39;
+}
+
+.back-tile.selected:active {
+    background-color: rgb(151, 0, 0);
 }
 
 .tile-point {
