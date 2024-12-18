@@ -1,15 +1,26 @@
 .rack {
     display: flex;
     justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 13px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.temp-rack {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 491px;
     gap: 13px;
     padding-top: 10px;
     padding-bottom: 10px;
 }
 
 .rack-cell.selected {
-    border-color: rgb(255, 255, 255); /* Highlight border */
-    background-color: #ffffff; /* Highlight background */
-    box-shadow: 0 0 12px rgb(255, 255, 255);
+    border-color: rgb(207, 123, 123); /* Highlight border */
+    background-color: rgb(255, 126, 126); /* Highlight background */
+    box-shadow: 0 0 12px rgb(255, 101, 101);
     transform: scale(1.1); /* Slight enlargement */
 }
 
@@ -37,7 +48,8 @@
     user-select: none;
 }
 
-.front-tile:active {    
+.front-tile:active {   
+    border: 1px solid #000000;
     background-color: #d3d3d3;
 }
 
@@ -56,19 +68,14 @@
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.selected {
-    background-color: rgb(255, 126, 126);
-}
-
-.tile-name {
+.rack-cell .tile-name {
     font-size: 20px;
+    color: #3e3e3e;
     z-index: 1;
 }
 
-.rack .tile-point {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
+.rack-cell .tile-point {
     font-size: 12px;
-    color: #444;
+    color: #3e3e3e; 
+    z-index: 1000;
 }

@@ -10,7 +10,15 @@ export default function AppBag(props) {
     openBag,
     setOpenBag,
     setRack,
+    exchangeMode,
+    setExchangeMode,
+    exchangeTiles,
+    setExchangeTiles,
+    randomTileBag,
+    exchangeConfirm,
+    setExchangeConfirm,
   } = props;
+
   const [selectedStack, setSelectedStack] = useState(null);
   const [selectedTiles, setSelectedTiles] = useState([]);
 
@@ -29,9 +37,37 @@ export default function AppBag(props) {
       });
     });
   }
+  // Cancel the exchange process and update the bag
+  function putTileInBag(nowTileBag, nowNullCount) {
+
+    if (exchangeMode && nowNullCount === 0) {
+      // Create a new array to hold the updated openBag
+      let updatedBag = [];
+
+      nowTileBag.forEach((stackIndex) => {
+        stackIndex.forEach((tileIndex) => {
+          updatedBag.push(tileIndex);
+        });
+      });
+    
+      // Loop through the tileBag and add exchanged tiles back to the bag
+      exchangeTiles.forEach((tile) => {
+        updatedBag.push({ name: tile.data.name, point: tile.data.point });
+      });
+
+      // Reset the state
+      setExchangeMode(false);
+      setExchangeTiles([]);
+      setTileBag(randomTileBag(updatedBag));
+      return;
+    }
+
+    // Update the openBag with the new array
+    setTileBag(nowTileBag);
+  }
 
   function openStackPopup() {
-    setOpenBag(true);
+      setOpenBag(true);
   }
 
   function openTilePopup(index) {
@@ -69,8 +105,8 @@ export default function AppBag(props) {
     if (selectedTileObjects.length > nullCount) {
       selectedTileObjects = selectedTileObjects.slice(0, nullCount);
     }
-
-    setNullCount(nullCount - selectedTileObjects.length);
+    const nowNullCount = nullCount - selectedTileObjects.length;
+    setNullCount(nowNullCount);
 
     const keysToRemove = selectedTiles.slice(0, selectedTileObjects.length);
 
@@ -85,16 +121,26 @@ export default function AppBag(props) {
       return stack;
     });
 
-    setTileBag(newTileBag);
-
     closePopupTiles();
+
+    putTileInBag(newTileBag, nowNullCount);
+
+    if (nowNullCount === 0) {
+      if (exchangeConfirm) {
+        setExchangeMode(false);
+        setExchangeConfirm(false);
+      }
+      closePopupStack();
+    }
   };
 
   return (
     <div className="app-bag">
-      <div className="bag" onClick={openStackPopup}>
-        Open Tile Bag
-      </div>
+      {!openBag && !selectedStack && (
+        <div className="bag" onClick={openStackPopup}>
+          Open Tile Bag
+        </div>)
+      }
 
       {openBag && !selectedStack && (
         <div className="popup-stack">

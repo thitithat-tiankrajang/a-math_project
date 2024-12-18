@@ -10,6 +10,7 @@ function AppRack(props) {
     setSelectedTileInRack,
     setTileInBoardByTern,
     selectedTileInRack,
+    exchangeMode,
   } = props;
   
   function onRackClick(index) {
@@ -79,7 +80,7 @@ function AppRack(props) {
 
   return (
     <div className="rack">
-      {rack.map((tile, index) => (
+      {!exchangeMode && rack.map((tile, index) => (
         <div
           key={index}
           className={`rack-cell ${

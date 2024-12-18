@@ -1,37 +1,53 @@
+.App {
+    height: 100vh;
+}
+
 .app-container {
     margin: auto;
     display: flex;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     background-color: rgb(34, 34, 34);
     justify-content: center;
 }
 
 .lefths {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     padding-left: 2rem;
     padding-top: 2rem;
     padding-bottom: 2.9rem;
 }
 
 .righths {
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: top; 
+    padding-top: 2rem;
     width: 100%;
-    height: 100%;
+    height: 100vh;
 }
 
 .top-section {
-    padding-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
 .center-section {
+    position: relative;
     display: flex;
     height: 10rem;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 117px;
+    margin-bottom: 117px;
+}
+
+.bottom-section {
+    display: block;
+    position: relative;
 }
 
 .action {
@@ -39,7 +55,7 @@
     justify-content: center;
     height: 50px;
     margin-top: 20px;
-    gap: 2.5%;
+    gap: 1.5%;
 }
 
 .pass-button {

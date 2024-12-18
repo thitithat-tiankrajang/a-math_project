@@ -49,21 +49,23 @@ function App() {
   }
   const [tileBag, setTileBag] = useState(randomTileBag(startTileBag));
 
-  function randomTileBag(tiles) {
-    // สุ่มลำดับของ tiles ด้วย Fisher-Yates Shuffle
-    for (let i = tiles.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-    }
+  const [exchangeMode, setExchangeMode] = useState(false);
+  const [exchangeConfirm, setExchangeConfirm] = useState(false);
+  const [exchangeTiles, setExchangeTiles] = useState([]);
 
-    // แบ่ง tiles เป็นกลุ่ม ๆ (เช่น 10 ชุด ๆ ละ 10 ตัว)
+  function randomTileBag(tiles) {
+    // for (let i = tiles.length - 1; i > 0; i--) {
+    //   const j = Math.floor(Math.random() * (i + 1));
+    //   [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+    // }
+
     const tileBag = [];
     for (let i = 0; i < 10; i++) {
       tileBag.push(tiles.slice(i * 10, (i + 1) * 10));
     }
 
     return tileBag;
-  };
+  }
 
   return (
     <div className="App">
@@ -96,6 +98,13 @@ function App() {
                 openBag={openBag}
                 setOpenBag={setOpenBag}
                 setRack={setRack}
+                exchangeMode={exchangeMode}
+                setExchangeMode={setExchangeMode}
+                exchangeTiles={exchangeTiles}
+                setExchangeTiles={setExchangeTiles}
+                randomTileBag={randomTileBag}
+                exchangeConfirm={exchangeConfirm}
+                setExchangeConfirm={setExchangeConfirm}
               />
             </section>
             <section className="bottom-section">
@@ -108,30 +117,36 @@ function App() {
                 setSelectedTileInRack={setSelectedTileInRack}
                 setTileInBoardByTern={setTileInBoardByTern}
                 selectedTileInRack={selectedTileInRack}
+                exchangeMode={exchangeMode}
               />
               <div className="action">
-                <AppSubmit
-                  boardState={boardState}
-                  setBoardState={setBoardState}
-                  firstTern={firstTern}
-                  setFirstTern={setFirstTern}
-                  nullCount={nullCount}
-                  setNullCount={setNullCount}
-                  tileInBoardByTern={tileInBoardByTern}
-                  setTileInBoardByTern={setTileInBoardByTern}
-                />
+                {!exchangeMode && (
+                  <AppSubmit
+                    boardState={boardState}
+                    setBoardState={setBoardState}
+                    firstTern={firstTern}
+                    setFirstTern={setFirstTern}
+                    nullCount={nullCount}
+                    setNullCount={setNullCount}
+                    tileInBoardByTern={tileInBoardByTern}
+                    setTileInBoardByTern={setTileInBoardByTern}
+                    exchangeMode={exchangeMode}
+                  />
+                )}
                 <AppExchange
-                  tileBag={tileBag}
-                  setTileBag={setTileBag}
                   rack={rack}
                   setRack={setRack}
-                  openBag={openBag}
                   setOpenBag={setOpenBag}
                   nullCount={nullCount}
                   setNullCount={setNullCount}
-                  randomTileBag={randomTileBag}
+                  exchangeMode={exchangeMode}
+                  setExchangeMode={setExchangeMode}
+                  exchangeTiles={exchangeTiles}
+                  setExchangeTiles={setExchangeTiles}
+                  exchangeConfirm={exchangeConfirm}
+                  setExchangeConfirm={setExchangeConfirm}
                 />
-                <AppPass />
+                {!exchangeMode && <AppPass />}
               </div>
             </section>
           </section>

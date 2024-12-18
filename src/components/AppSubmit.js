@@ -11,9 +11,12 @@ function AppSubmit(props) {
     setNullCount,
     tileInBoardByTern,
     setTileInBoardByTern,
+    exchangeMode,
   } = props;
 
   function isValidEquation(equation) {
+    // ฟังก์ชันตรวจสอบความถูกต้องของสมการ
+
     // แปลงเครื่องหมายพิเศษ
     function normalizeOperators(arr) {
       return arr.map((item) => {
@@ -22,6 +25,13 @@ function AppSubmit(props) {
         if (item === "−") return "-";
         return item;
       });
+    }
+
+    // ฟังก์ชันแปลง array เป็นสตริงสมการ
+    function arrayToEquation(arr) {
+      return arr
+        .map((item) => (typeof item === "number" ? item.toString() : item))
+        .join("");
     }
 
     // ฟังก์ชันตรวจสอบกฎข้อที่ 1 เกี่ยวกับการเรียงตัวเลข
@@ -58,35 +68,27 @@ function AppSubmit(props) {
       return true;
     }
 
-    // ฟังก์ชันคำนวณสมการอย่างปลอดภัย
-    function safeEvaluate(part) {
-      // แยกสมการออกเป็นส่วนๆ
-      const tokens = part.match(/\d+|[+\-*/]/g) || [];
-      let result = parseInt(tokens[0]);
+    // ฟังก์ชันประมวลผลสมการ
+    function evaluateEquation(equation) {
+      // แยกส่วนด้วย =
+      const parts = equation.split("=");
 
-      for (let i = 1; i < tokens.length; i += 2) {
-        const operator = tokens[i];
-        const operand = parseInt(tokens[i + 1]);
+      // คำนวณแต่ละส่วน
+      const evaluatedParts = parts.map((part) => {
+        // คำนวณคูณ/หาร ก่อน
+        part = part.replace(/(\d+)\s*[*/]\s*(\d+)/g, (match, a, b) => {
+          const operator = match.includes("*") ? "*" : "/";
+          return operator === "*"
+            ? parseInt(a) * parseInt(b)
+            : parseInt(a) / parseInt(b);
+        });
 
-        switch (operator) {
-          case "+":
-            result += operand;
-            break;
-          case "-":
-            result -= operand;
-            break;
-          case "*":
-            result *= operand;
-            break;
-          case "/":
-            // ตรวจสอบการหารด้วยศูนย์
-            if (operand === 0) return NaN;
-            result = Math.floor(result / operand);
-            break;
-        }
-      }
+        // คำนวณบวก/ลบ
+        return eval(part);
+      });
 
-      return result;
+      // ตรวจสอบว่าทุกส่วนเท่ากัน
+      return evaluatedParts.every((val) => val === evaluatedParts[0]);
     }
 
     // ตรวจสอบเงื่อนไข
@@ -100,25 +102,11 @@ function AppSubmit(props) {
       // ตรวจสอบกฎการเรียงตัวเลข
       if (!checkNumberRules(arr)) return false;
 
-      // แยกสมการด้วย =
-      const parts = [];
-      let currentPart = [];
+      // แปลง array เป็นสตริง
+      const equationStr = arrayToEquation(arr);
 
-      for (let item of arr) {
-        if (item === "=") {
-          parts.push(currentPart.join(""));
-          currentPart = [];
-        } else {
-          currentPart.push(item);
-        }
-      }
-      parts.push(currentPart.join(""));
-
-      // ประเมินแต่ละส่วน
-      const evaluatedParts = parts.map(safeEvaluate);
-
-      // ตรวจสอบว่าทุกส่วนเท่ากัน
-      return evaluatedParts.every((val) => val === evaluatedParts[0]);
+      // ตรวจสอบการประเมินสมการ
+      return evaluateEquation(equationStr);
     }
 
     return validateEquation(equation);
@@ -131,19 +119,18 @@ function AppSubmit(props) {
     ["7", "-", "5", "=", "6", "-", "4", "=", "3", "+", "1"],
     ["2", "=", "2", "=", "4"],
     ["5", "×", "3", "+", "2", "=", "17"],
-    ["1", "0", "8", "÷", "2", "+", "3", "=", "5", "7"],
+    ["3", "+", "1", "0", "8", "÷", "2", "=", "5", "7"],
     ["0", "5", "+", "0", "8", "=", "1", "3"],
     ["1", "÷", "3", "+", "2", "÷", "3", "=", "1"],
     ["19", "÷", "13", "+", "1", "4", "÷", "2", "6", "=", "2"],
     ["-", "5", "+", "9", "=", "4"],
-    ["-", "5", "-", "-", "9", "=", "4"],
   ];
 
-  testCases.forEach((testCase, index) => {
-    console.log(
-      `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
-    );
-  });
+  // testCases.forEach((testCase, index) => {
+  //   console.log(
+  //     `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
+  //   );
+  // });
 
   function onSubmitClick() {
     if (firstTern && boardState[7][7].data.name === "empty-cell") {
@@ -242,9 +229,11 @@ function AppSubmit(props) {
   }
   return (
     <div className="app-submit">
-      <div className="submit-text" onClick={() => onSubmitClick()}>
-        SUBMIT
-      </div>
+      {!exchangeMode &&
+        <div className="submit-text" onClick={() => onSubmitClick()}>
+          SUBMIT
+        </div>
+      }
     </div>
   );
 }

@@ -1,8 +1,11 @@
-.exchange-instructions {
+.app-exchange {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 25%;
 }
 
-.app-exchange {
+.exchange-text {
     display: flex; 
     justify-content: center;
     align-items: center;
@@ -13,66 +16,15 @@
     border: 1px solid gray;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.app-exchange:active {
-    background-color: white;
-}
-
-.app-exchange:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
-}
-
-.exchange-ui {
-    position: relative;
-    top: -140%;
-    left: 0%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border: 2px solid #444;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 999;
-
-    /* Fixed width and height */
-    width: 470px;   /* Set a fixed width */
-    height: 100px;  /* Set a fixed height */
-}
-
-.rack {
-    display: flex;
-    justify-content: center;
-    gap: 13px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
-.rack-tile.selected {
-    background-color: red;
-}
-
-.rack-tile {
-    position: relative;
-    width: 50px;
-    height: 50px;
-    background-color: #ffffff;
-    border: 1px solid #000000;
-    border-radius: 10px;
-    display: grid;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3em;
-    font-weight: bold;
-    color: #444;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    user-select: none;
-}
-
-.exchange-text {
-    width: 100%;
     text-align: center;
     user-select: none;
+}
+
+.exchange-text:active {
+    background-color: white;
+}
+
+.exchange-text:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
 }

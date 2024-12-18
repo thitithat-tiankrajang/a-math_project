@@ -85,41 +85,41 @@
 }
 
 .Px2 {
-    background-color: #ffc251;
+    background-color: #4dafff;
 }
 
 .Px2:hover {
-    background-color: #ffc353df;
+    background-color: #4dafffe2;
 }
 
-.Px3 .str {
-    background-color: #4dafff;
-    color: white;
-    z-index: 1;
+.Px3 {
+    background-color: #2ecd46;
 }
 
 .Px3:hover {
-    background-color: #4dafffe2;
+    background-color: #2ecd46cb;
+}
+
+.str {
+    background-color: #2ecd46;
 }
 
 .str:hover {
-    background-color: #4dafffe2;
+    background-color: #2ecd46cb;
 }
 
 .Ex2 {
-    background-color: #ffff77;
+    background-color: #ffec44;
 }
 
 .Ex2:hover {
-    background-color: #ffff77e5;
+    background-color: #ffec44d5;
 }
 
 .Ex3 {
-    background-color: #ff4949;
-    color: white;
+    background-color: #ff5858;
 }
 
 .Ex3:hover {
-    background-color: #ff4949dc;
-    color: white;
+    background-color: #ff3f3fda;
 }

@@ -1,5 +1,5 @@
 .app-bag {
-    display: grid;
+    display: block;
     justify-content: center;
 }
 
@@ -15,6 +15,7 @@
     font-weight: bold;
     text-align: center;
     transition: transform 0.2s, box-shadow 0.2s;
+    user-select: none;
 }
 
 .bag:active {
@@ -27,8 +28,8 @@
 }
 
 .stack {
-    width: 100px;
-    height: 100px;
+    width: 84px;
+    height: 84px;
     background-color: #ccc;
     border: 2px solid #888;
     display: flex;
@@ -39,10 +40,6 @@
     transition: transform 0.2s, box-shadow 0.2s;
 }
 .popup-stack {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background-color: white;
     border: 2px solid #444;
     padding: 20px;
@@ -61,10 +58,6 @@
 }
 
 .popup-tiles {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background-color: white;
     border: 2px solid #444;
     padding: 20px;
