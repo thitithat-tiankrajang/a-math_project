@@ -38,10 +38,10 @@ function AppExchange(props) {
     });
 
     setNullCount(exchangeTiles.length);
-
     setRack(updatedRack);
-
     setOpenBag(true);
+
+    setExchangeConfirm(true); // Mark the exchange as confirmed
 
     return exchangedTiles;
   };
