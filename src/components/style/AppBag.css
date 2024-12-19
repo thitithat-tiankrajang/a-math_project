@@ -1,13 +1,17 @@
+/* General layout for the app-bag container */
 .app-bag {
-    display: block;
+    display: flex;
     justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
+/* Styling for the main bag button */
 .bag {
     width: 100px;
     height: 100px;
-    background-color: #e8e8e8;
-    border: 2px solid #888;
+    background-color: #ffffff;
+    border: 2px solid rgb(213, 244, 255);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,88 +20,107 @@
     text-align: center;
     transition: transform 0.2s, box-shadow 0.2s;
     user-select: none;
+    border-radius: 12px; /* Smooth edges */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
+/* Active state for the bag */
 .bag:active {
     background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More prominent shadow on active */
 }
 
+/* Hover effect for the bag */
 .bag:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
 }
 
+/* Styling for the stacks inside the popup */
 .stack {
     width: 84px;
     height: 84px;
-    background-color: #ccc;
-    border: 2px solid #888;
+    background-color: #ffffff;
+    border: 2px solid #000808;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     font-weight: bold;
+    border-radius: 8px;
     transition: transform 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
 }
+
+/* Popup for the stacks */
 .popup-stack {
-    background-color: white;
+    background-color: rgb(226, 243, 249);
     border: 2px solid #444;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    border-radius: 8px; /* Smooth rounded corners */
 }
 
+/* Grid layout for the stack content */
 .popup-stack-content {
     margin-top: 20px;
-    height: 100%;
-    width: 100%;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
-    align-items: center;
+    justify-items: center;
+    overflow: auto;
 }
 
+/* Styling for the tiles popup */
 .popup-tiles {
-    background-color: white;
+    background-color: rgb(226, 243, 249);
     border: 2px solid #444;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    border-radius: 8px;
 }
 
+/* Content layout inside the tiles popup */
 .popup-tiles-content {
-    height: 100%;
-    width: 100%;
     display: grid;
-    align-items: center;
+    justify-items: center;
+    grid-gap: 20px;
 }
 
-.close-popup-stack-button {
-    cursor: pointer;
-    width: 100%;
-    height: 50px; /* เพิ่มความสูงของปุ่ม */
-    font-size: 1.2em; /* ขยายขนาดตัวอักษร */
-    box-sizing: border-box; /* คำนวณขนาดรวมของ padding และ border */
-}
-
-.close-popup-tiles-button {
-    cursor: pointer;
-    width: 100%;
-    height: 50px; /* เพิ่มความสูงของปุ่ม */
-    font-size: 1.2em; /* ขยายขนาดตัวอักษร */
-    box-sizing: border-box; /* คำนวณขนาดรวมของ padding และ border */
-}
-
-
+/* Close button styles */
+.close-popup-stack-button,
+.close-popup-tiles-button,
 .pick-popup-tiles-button {
     cursor: pointer;
     width: 100%;
-    height: 50px; /* เพิ่มความสูงของปุ่ม */
-    font-size: 1.2em; /* ขยายขนาดตัวอักษร */
-    box-sizing: border-box; /* คำนวณขนาดรวมของ padding และ border */
+    height: 50px;
+    font-size: 1.2em;
+    font-weight: bold;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background-color: #57c0fd;
+    color: white;
+    border: none;
+    transition: background-color 0.2s, box-shadow 0.2s;
 }
 
+/* Hover effect for buttons */
+.close-popup-stack-button:hover,
+.close-popup-tiles-button:hover,
+.pick-popup-tiles-button:hover {
+    background-color: #007bb5;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
+/* Styling for the tile grid inside the popup */
 .tiles {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -106,54 +129,71 @@
     margin-bottom: 20px;
 }
 
+/* Individual tile styling */
 .back-tile {
     position: relative;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     background-color: #1c4052;
-    border: 1px solid #00a2ff;
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3em;
+    font-size: 1.5em;
     font-weight: bold;
-    color: #444;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    overflow: hidden;
 }
 
-.back-tile.selected {
-    background-color: red;
+.tile-icon {
+    position: absolute;
+    font-size: 20px;
+    color: gold; /* Star color */
+    z-index: 1; /* Ensure it appears on top */
 }
 
+/* Hover effect for tiles */
 .back-tile:hover {
-    transform: scale(1.1);
+    transform: scale(1.1); /* Slightly enlarge */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Shadow for hover */
+}
+
+/* Active state for tiles */
+.back-tile:active {
+    background-color: #132c39;
+    transform: scale(1.05);
+}
+
+/* Selected tile styling */
+.back-tile.selected {
+    background-color: #ffffff; /* Bright color for selection */
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
 }
 
-.back-tile:active {
-    background-color: #132c39;
-}
-
-.back-tile.selected:active {
-    background-color: rgb(151, 0, 0);
-}
-
+/* Styling for tile points */
 .tile-point {
     position: absolute;
     bottom: 5px;
     right: 5px;
-    font-size: 10px;
-    color: #fff;
+    font-size: 12px;
+    color: #ffd700; /* Gold color for the point */
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.popup .tiles .tile {
-    margin: 10px;
+/* Smooth animation for scaling */
+@keyframes tile-scale-up {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.1);
+    }
 }
 
-.stack:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+.back-tile:active {
+    animation: tile-scale-up 0.2s ease;
 }

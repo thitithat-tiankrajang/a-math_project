@@ -188,6 +188,9 @@ export default function AppBag(props) {
                     toggleSelectedTile(selectedStack.stackIndex, tileIndex)
                   }
                 >
+                  <div className="tile-icon">
+                    <i className="fas fa-star"></i> {/* Font Awesome star icon */}
+                  </div>
                   {/* {tile.name}
                   <div className="tile-point">{tile.point}</div> */}
                 </div>
