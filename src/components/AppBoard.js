@@ -144,7 +144,7 @@ function AppBoard(props) {
   const createElementInCell = (rowIndex, cellIndex) => {
     if (boardState[rowIndex][cellIndex].data.name === "empty-cell") {
       return board[rowIndex][cellIndex] === "str" ? (
-        <img src="./star-image.png" alt="Star" className="str-image" />
+        <div className="str-text"> ★ </div>
       ) : (
         getNameFromClass(board[rowIndex][cellIndex])
       );

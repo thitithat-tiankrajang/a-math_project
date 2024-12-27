@@ -54,10 +54,10 @@ function App() {
   const [exchangeTiles, setExchangeTiles] = useState([]);
 
   function randomTileBag(tiles) {
-    // for (let i = tiles.length - 1; i > 0; i--) {
-    //   const j = Math.floor(Math.random() * (i + 1));
-    //   [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-    // }
+    for (let i = tiles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+    }
 
     const tileBag = [];
     for (let i = 0; i < 10; i++) {
@@ -108,45 +108,47 @@ function App() {
               />
             </section>
             <section className="bottom-section">
-              <AppRack
+            {!exchangeMode && (<AppRack
                 rack={rack}
                 setRack={setRack}
                 setBoardState={setBoardState}
                 selectedTileInBoard={selectedTileInBoard}
                 setSelectedTileInBoard={setSelectedTileInBoard}
-                setSelectedTileInRack={setSelectedTileInRack}
+                tileInBoardByTern={tileInBoardByTern}
                 setTileInBoardByTern={setTileInBoardByTern}
                 selectedTileInRack={selectedTileInRack}
-                exchangeMode={exchangeMode}
-              />
+                setSelectedTileInRack={setSelectedTileInRack}
+              />)}
               <div className="action">
-                {!exchangeMode && (
-                  <AppSubmit
-                    boardState={boardState}
-                    setBoardState={setBoardState}
-                    firstTern={firstTern}
-                    setFirstTern={setFirstTern}
+                <div className="tools">
+                  {!exchangeMode && (
+                    <AppSubmit
+                      boardState={boardState}
+                      setBoardState={setBoardState}
+                      firstTern={firstTern}
+                      setFirstTern={setFirstTern}
+                      nullCount={nullCount}
+                      setNullCount={setNullCount}
+                      tileInBoardByTern={tileInBoardByTern}
+                      setTileInBoardByTern={setTileInBoardByTern}
+                      exchangeMode={exchangeMode}
+                    />
+                  )}
+                  <AppExchange
+                    rack={rack}
+                    setRack={setRack}
+                    setOpenBag={setOpenBag}
                     nullCount={nullCount}
                     setNullCount={setNullCount}
-                    tileInBoardByTern={tileInBoardByTern}
-                    setTileInBoardByTern={setTileInBoardByTern}
                     exchangeMode={exchangeMode}
+                    setExchangeMode={setExchangeMode}
+                    exchangeTiles={exchangeTiles}
+                    setExchangeTiles={setExchangeTiles}
+                    exchangeConfirm={exchangeConfirm}
+                    setExchangeConfirm={setExchangeConfirm}
                   />
-                )}
-                <AppExchange
-                  rack={rack}
-                  setRack={setRack}
-                  setOpenBag={setOpenBag}
-                  nullCount={nullCount}
-                  setNullCount={setNullCount}
-                  exchangeMode={exchangeMode}
-                  setExchangeMode={setExchangeMode}
-                  exchangeTiles={exchangeTiles}
-                  setExchangeTiles={setExchangeTiles}
-                  exchangeConfirm={exchangeConfirm}
-                  setExchangeConfirm={setExchangeConfirm}
-                />
-                {!exchangeMode && <AppPass />}
+                  {!exchangeMode && <AppPass />}
+                </div>
               </div>
             </section>
           </section>

@@ -7,12 +7,12 @@
     display: flex;
     height: 100%;
     width: 100%;
-    background-color: rgb(34, 34, 34);
+    background-color: rgb(43, 43, 43);
     justify-content: center;
 }
 
 .lefths {
-    width: 100%;
+    width: 735px;
     height: 100vh;
     padding-left: 2rem;
     padding-top: 2rem;
@@ -47,10 +47,17 @@
 
 .bottom-section {
     display: block;
+    height: 156px;
     position: relative;
 }
 
 .action {
+    display: block;
+    justify-content: center; 
+    margin-top: 20px;
+}
+
+.tools {
     display: flex;
     justify-content: center;
     height: 50px;

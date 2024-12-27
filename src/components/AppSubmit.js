@@ -15,101 +15,172 @@ function AppSubmit(props) {
   } = props;
 
   function isValidEquation(equation) {
-    // ฟังก์ชันตรวจสอบความถูกต้องของสมการ
-
-    // แปลงเครื่องหมายพิเศษ
-    function normalizeOperators(arr) {
+    // Function to convert string array to appropriate format
+    function parseInput(arr) {
       return arr.map((item) => {
-        if (item === "×") return "*";
-        if (item === "÷") return "/";
-        if (item === "−") return "-";
-        return item;
+        // Check if item is an operator
+        if (["+", "-", "×", "*", "÷", "/", "=", "−"].includes(item)) {
+          // Standardize operators
+          if (item === "×" || item === "*") return "x";
+          if (item === "÷") return "/";
+          if (item === "−") return "-";
+          return item;
+        }
+        // Convert string numbers to actual numbers
+        const num = parseInt(item);
+        if (isNaN(num)) return null;
+        return num;
       });
     }
 
-    // ฟังก์ชันแปลง array เป็นสตริงสมการ
-    function arrayToEquation(arr) {
-      return arr
-        .map((item) => (typeof item === "number" ? item.toString() : item))
-        .join("");
-    }
+    // Function to check operator placement rules
+    function checkOperatorRules(arr) {
+      for (let i = 0; i < arr.length - 1; i++) {
+        const current = arr[i];
+        const next = arr[i + 1];
 
-    // ฟังก์ชันตรวจสอบกฎข้อที่ 1 เกี่ยวกับการเรียงตัวเลข
-    function checkNumberRules(arr) {
-      // แปลงทุก item เป็นสตริง
-      const processedArr = arr.map((item) => String(item));
-
-      // ตรวจสอบกลุ่มตัวเลข
-      const numberGroups = processedArr.join("").match(/\d+/g) || [];
-
-      for (let group of numberGroups) {
-        // ตรวจสอบ 0 นำหน้าในกลุ่มตัวเลข
-        if (/^0\d/.test(group)) {
-          // ถ้าเป็นเลขสองหลักหรือสามหลักที่เริ่มต้นด้วย 0 ให้ปฏิเสธ
+        // Check if both current and next items are operators
+        if (typeof current === "string" && typeof next === "string") {
+          // The only allowed adjacent operators are '=' followed by '-'
+          if (current === "=" && next === "-") {
+            continue;
+          }
+          // Any other combination of adjacent operators is invalid
           return false;
         }
       }
-
-      for (let i = 0; i < processedArr.length; i++) {
-        const currentItem = processedArr[i];
-
-        // ตรวจสอบเลขสองหลัก
-        if (/^(10|11|12|13|14|15|16|17|18|19|20)$/.test(currentItem)) {
-          // ถ้าเป็นเลข 10-20 ห้ามติดกับเลขอื่น
-          if (i > 0 && /^\d$/.test(processedArr[i - 1])) return false;
-          if (i < processedArr.length - 1 && /^\d$/.test(processedArr[i + 1]))
-            return false;
-        }
-
-        // ตรวจสอบเลขหลายหลัก
-        if (/^\d{4,}$/.test(currentItem)) return false;
-      }
-
       return true;
     }
 
-    // ฟังก์ชันประมวลผลสมการ
-    function evaluateEquation(equation) {
-      // แยกส่วนด้วย =
-      const parts = equation.split("=");
+    // Function to combine consecutive digits according to rules
+    function combineNumbers(arr) {
+      let result = [];
+      let currentNum = "";
 
-      // คำนวณแต่ละส่วน
-      const evaluatedParts = parts.map((part) => {
-        // คำนวณคูณ/หาร ก่อน
-        part = part.replace(/(\d+)\s*[*/]\s*(\d+)/g, (match, a, b) => {
-          const operator = match.includes("*") ? "*" : "/";
-          return operator === "*"
-            ? parseInt(a) * parseInt(b)
-            : parseInt(a) / parseInt(b);
-        });
+      for (let i = 0; i < arr.length; i++) {
+        if (typeof arr[i] === "number") {
+          // Check if it's a two-digit number (10-20)
+          if (arr[i] >= 10) {
+            if (currentNum !== "") {
+              result.push(parseInt(currentNum));
+              currentNum = "";
+            }
+            result.push(arr[i]);
+            continue;
+          }
 
-        // คำนวณบวก/ลบ
-        return eval(part);
-      });
+          // Handle single digits
+          if (currentNum === "0") {
+            // Leading zero rule
+            return null;
+          }
+          currentNum += arr[i].toString();
 
-      // ตรวจสอบว่าทุกส่วนเท่ากัน
-      return evaluatedParts.every((val) => val === evaluatedParts[0]);
+          // Check if current number exceeds 3 digits
+          if (currentNum.length > 3) {
+            return null;
+          }
+        } else {
+          if (currentNum !== "") {
+            result.push(parseInt(currentNum));
+            currentNum = "";
+          }
+          result.push(arr[i]);
+        }
+      }
+
+      if (currentNum !== "") {
+        result.push(parseInt(currentNum));
+      }
+
+      return result;
     }
 
-    // ตรวจสอบเงื่อนไข
-    function validateEquation(arr) {
-      // นอร์มอไลซ์เครื่องหมาย
-      arr = normalizeOperators(arr);
+    // Function to evaluate a simple expression without =
+    function evaluateExpression(expr) {
+      try {
+        // Convert expression array to math.js compatible string
+        const exprStr = expr
+          .map((item) => {
+            if (item === "x") return "*";
+            return item;
+          })
+          .join("");
 
-      // ตรวจสอบว่ามี = อย่างน้อย 1 ตัว
-      if (!arr.includes("=")) return false;
+        // Use math.evaluate from math.js
+        const result = math.evaluate(exprStr);
 
-      // ตรวจสอบกฎการเรียงตัวเลข
-      if (!checkNumberRules(arr)) return false;
+        // Check if result is a number and valid
+        if (typeof result !== "number" || !isFinite(result)) {
+          return null;
+        }
 
-      // แปลง array เป็นสตริง
-      const equationStr = arrayToEquation(arr);
-
-      // ตรวจสอบการประเมินสมการ
-      return evaluateEquation(equationStr);
+        return result;
+      } catch (error) {
+        return null;
+      }
     }
 
-    return validateEquation(equation);
+    // Main validation logic
+    try {
+      // Parse the input first
+      const arr = parseInput(equation);
+
+      // Check for invalid input
+      if (arr.includes(null)) {
+        return false;
+      }
+
+      // Check operator placement rules
+      if (!checkOperatorRules(arr)) {
+        return false;
+      }
+
+      // Check if array contains at least one equals sign
+      if (!arr.includes("=")) {
+        return false;
+      }
+
+      // Combine consecutive numbers according to rules
+      const processed = combineNumbers(arr);
+      if (processed === null) {
+        return false;
+      }
+
+      // Split equation into parts by equals sign
+      const parts = [];
+      let currentPart = [];
+
+      for (const item of processed) {
+        if (item === "=") {
+          if (currentPart.length === 0) return false;
+          parts.push(currentPart);
+          currentPart = [];
+        } else {
+          currentPart.push(item);
+        }
+      }
+
+      if (currentPart.length > 0) {
+        parts.push(currentPart);
+      }
+
+      // Evaluate each part using math.js
+      const results = parts.map((part) => evaluateExpression(part));
+
+      // Check if any part is invalid
+      if (results.includes(null)) {
+        return false;
+      }
+
+      // Check if all parts are equal
+      const firstResult = results[0];
+      return results.every(
+        (result) => Math.abs(result - firstResult) < 0.000001
+      );
+    } catch (error) {
+      return false;
+    }
   }
 
   // ตัวอย่างการใช้งาน
@@ -124,116 +195,108 @@ function AppSubmit(props) {
     ["1", "÷", "3", "+", "2", "÷", "3", "=", "1"],
     ["19", "÷", "13", "+", "1", "4", "÷", "2", "6", "=", "2"],
     ["-", "5", "+", "9", "=", "4"],
+    ["5", "×", "-", "5", "=", "-", "2", "5"],
+    ["-", "5", "×", "5", "=", "-", "2", "5"],
+    ["1", "0", "8", "5", "=", "1", "0", "8", "5"],
+    ["7", "÷", "10", "=", "7", "÷", "10"],
   ];
 
-  // testCases.forEach((testCase, index) => {
-  //   console.log(
-  //     `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
-  //   );
-  // });
+  testCases.forEach((testCase, index) => {
+    console.log(
+      `Test Case ${index + 1}: ${testCase} - ${isValidEquation(testCase)}`
+    );
+  });
 
   function onSubmitClick() {
-    if (firstTern && boardState[7][7].data.name === "empty-cell") {
-      alert("wrong");
-      return;
-    }
-    if (nullCount !== 0) {
-      return;
-    }
-
-    console.log(tileInBoardByTern);
-    let checkRow = true,
-      checkCol = true,
-      firstRow = null,
-      firstCol = null;
-    if (tileInBoardByTern.length === 0) {
-      alert("wrong");
-      return;
-    }
-
-    for (let i = 0; i < tileInBoardByTern.length; i++) {
-      if (firstCol === null && firstRow === null) {
-        firstRow = tileInBoardByTern[i].rowIdx;
-        firstCol = tileInBoardByTern[i].colIdx;
-      } else {
-        if (firstRow !== tileInBoardByTern[i].rowIdx) {
-          checkRow = false;
-        }
-        if (firstCol !== tileInBoardByTern[i].colIdx) {
-          checkCol = false;
-        }
+    console.log(tileInBoardByTern)
+    // Early return checks
+    if (
+      (firstTern && boardState[7][7].data.name === "empty-cell") ||
+      nullCount !== 0 ||
+      tileInBoardByTern.length === 0
+    ) {
+      if (
+        tileInBoardByTern.length === 0 ||
+        (firstTern && boardState[7][7].data.name === "empty-cell")
+      ) {
+        console.log("wrong0");
       }
+      return;
     }
 
-    if (checkRow || checkCol) {
-      let sortedArr = [];
-      let inline = true;
-      if (checkRow) {
-        sortedArr = [...tileInBoardByTern].sort((a, b) => a.colIdx - b.colIdx);
-        for (
-          let i = sortedArr[0].colIdx;
-          i <= sortedArr[sortedArr.length - 1].colIdx;
-          i++
-        ) {
-          if (boardState[firstRow][i].data.name === "empty-cell") {
-            inline = false;
-          }
-        }
-        if (inline) {
-          console.log("correct");
-          setBoardState((prevBoard) => {
-            const newBoard = [...prevBoard];
-            for (let i = 0; i < tileInBoardByTern.length; i++) {
-              newBoard[tileInBoardByTern[i].rowIdx][
-                tileInBoardByTern[i].colIdx
-              ].lock = true;
-            }
-            return newBoard;
-          });
-        } else {
-          alert("wrong");
-        }
-      } else {
-        sortedArr = [...tileInBoardByTern].sort((a, b) => a.rowIdx - b.rowIdx);
-        for (
-          let i = sortedArr[0].rowIdx;
-          i <= sortedArr[sortedArr.length - 1].rowIdx;
-          i++
-        ) {
-          if (boardState[i][firstCol].data.name === "empty-cell") {
-            inline = false;
-          }
-        }
-        if (inline) {
-          console.log("correct");
-          setBoardState((prevBoard) => {
-            const newBoard = [...prevBoard];
-            for (let i = 0; i < tileInBoardByTern.length; i++) {
-              newBoard[tileInBoardByTern[i].rowIdx][
-                tileInBoardByTern[i].colIdx
-              ].lock = true;
-            }
-            return newBoard;
-          });
-        } else {
-          alert("wrong");
-        }
+    // Find first tile position and check alignment
+    const firstTile = tileInBoardByTern[0];
+    const alignment = tileInBoardByTern.reduce(
+      (acc, tile) => ({
+        row: acc.row && firstTile.rowIdx === tile.rowIdx,
+        col: acc.col && firstTile.colIdx === tile.colIdx,
+      }),
+      { row: true, col: true }
+    );
+
+    if (!alignment.row && !alignment.col) {
+      console.log("wrong1");
+      return;
+    }
+
+    // Check if tiles are inline and update board
+    const checkAndUpdateBoard = (isRow) => {
+      const sortedTiles = [...tileInBoardByTern].sort((a, b) =>
+        isRow ? a.colIdx - b.colIdx : a.rowIdx - b.rowIdx
+      );
+
+      const start = isRow ? sortedTiles[0].colIdx : sortedTiles[0].rowIdx;
+      const end = isRow
+        ? sortedTiles[sortedTiles.length - 1].colIdx
+        : sortedTiles[sortedTiles.length - 1].rowIdx;
+      const fixedIndex = isRow ? firstTile.rowIdx : firstTile.colIdx;
+
+      // Check if all cells in line are filled
+      const isInline = Array.from({ length: end - start + 1 }, (_, i) => {
+        const pos = start + i;
+        return isRow
+          ? boardState[fixedIndex][pos].data.name !== "empty-cell"
+          : boardState[pos][fixedIndex].data.name !== "empty-cell";
+      }).every(Boolean);
+
+      if (!isInline) {
+        console.log("wrong2");
+        return false;
       }
-      console.log(sortedArr);
+
+      // Update board state
+      setBoardState((prevBoard) => {
+        const newBoard = [...prevBoard];
+        tileInBoardByTern.forEach((tile) => {
+          newBoard[tile.rowIdx][tile.colIdx].lock = true;
+        });
+        return newBoard;
+      });
+
+      return true;
+    };
+
+    // Process tiles based on alignment
+    const success = alignment.row
+      ? checkAndUpdateBoard(true)
+      : checkAndUpdateBoard(false);
+
+    if (success) {
+      if (firstTern) {
+        setFirstTern(false);
+      }
+      setNullCount(tileInBoardByTern.length);
+      setTileInBoardByTern([]);
     }
-    if (firstTern) {
-      setFirstTern(false);
-    }
-    setNullCount(tileInBoardByTern.length);
-    setTileInBoardByTern([]);
   }
+
   return (
     <div className="app-submit">
-      {!exchangeMode &&
+      {!exchangeMode && (
         <div className="submit-text" onClick={() => onSubmitClick()}>
           SUBMIT
         </div>
-      }
+      )}
     </div>
   );
 }

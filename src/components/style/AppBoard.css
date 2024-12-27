@@ -1,9 +1,10 @@
 .board {
     height: 100%;
-    width: 100%;
+    width: 735px;
+    height: 735px;
     display: grid;
-    margin: 0;
-    padding: 0;
+    border: 1px solid black;
+    outline: 10px solid rgb(197, 197, 197);
     grid-template-rows: repeat(15, 49px);
 }
 
@@ -72,8 +73,9 @@
     color: #ffffff;
 }
 
-.str-image {
-    height: 30px;
+.str-text {
+    font-size: 2.5em;
+    color: #00000083;
 }
 
 .Px1 {
